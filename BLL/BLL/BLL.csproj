@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbManager.cs" />
+    <Compile Include="DTO\ImageDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="Program.cs" />

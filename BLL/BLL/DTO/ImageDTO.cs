@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Entities
+namespace BLL.DTO
 {
-    public class Image
+    public class ImageDTO
     {
         public int Id { get; set; }
         public string MymeType { get; set; }
@@ -14,13 +14,6 @@ namespace Data.Entities
         public int UserId { get; set; }
 
         public Guid BlobId { get; set; }
-
-        public virtual User User { get; set; }
-
-        public virtual Avatar Avatar { get; set; }
-
-        public virtual PostImage PostImage { get; set; }
-
 
     }
 }

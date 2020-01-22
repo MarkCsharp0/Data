@@ -10,6 +10,8 @@ namespace BLL.DTO
     {
         public int Id { get; set; }
 
+        public int? ImageAvatarId { get; set; }
+
         public string LoginName { get; set; }
 
         public string PasswordHash { get; set; }

@@ -6,25 +6,21 @@ using System.Web;
 
 namespace MVC.Models
 {
-    public class RegUserModel
+    public class UserModel
     {
-
-        [Display(Name = "Имя пользователя")]
-        [Required(ErrorMessage = "Поле не заполнено")]
+        [Required]
         public string LoginName { get; set; }
-
         [Required]
         public string Password { get; set; }
+
         [Required]
         public string Nickname { get; set; }
         [Required]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
-        public DateTime BirthDate { get; set; }
-        //    [Required]
-        [Display(Name = "Настройки приватности")]
+        public DateTime Birthdate { get; set; }
         public bool SharedProfile { get; set; }
-       // public int Id { get; set; }
+        public int Id { get; set; }
 
-
+        public int? ImageAvatarId { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace MVC.CustomAuth
 
         public string LoginName { get; set; }
         public string Nickname { get; set; }
-        public CustomMembershipUser(UserDTO user) 
+        public CustomMembershipUser(UserDTO user)
         {
             UserId = user.Id;
             Nickname = user.Nickname;

@@ -22,13 +22,27 @@ namespace MVC
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 
+        protected FormsAuthenticationTicket GetAuthTicket()
+        {
+            HttpCookie authCookie = Request.Cookies["Cookie25"];
+            if (authCookie == null) return null;
+            try
+            {
+                return FormsAuthentication.Decrypt(authCookie.Value);
+            }
+            catch (Exception exception)
+            {
+                //errorLog.Write("Can't decrypt cookie! {0}", exception.Message);
+                return null;
+            }
+        }
+
         protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
         {
-            HttpCookie authCookie = Request.Cookies["Cookie32"];
-            if (authCookie != null)
+            var authTicket = GetAuthTicket();
+            if (authTicket != null)
             {
-                FormsAuthenticationTicket authTicket = FormsAuthentication.Decrypt(authCookie.Value);
-
+               
                 var serializeModel = JsonConvert.DeserializeObject<UserSerializeModel>(authTicket.UserData);
 
                 CustomPrincipal principal = new CustomPrincipal(authTicket.Name)

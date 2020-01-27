@@ -21,6 +21,8 @@ namespace Data.Entities
         public int UserId { get; set; }
         public DateTime CreateDate { get; set; }
         public string Location { get; set; }
+
+        public string Description { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }
         public virtual ICollection<PostImage> PostImages { get; set; }
 

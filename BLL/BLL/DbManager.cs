@@ -17,11 +17,11 @@ namespace BLL
                 {
                     var dbUser = ctx.Users.FirstOrDefault(x => x.Id == User.Id) ?? ctx.Users.Add(new Data.Entities.User());
 
-                //    if (ctx.Users.Any(x => x.LoginName == User.LoginName && x.Id != dbUser.Id))
-                  //      throw new Exception($"User with loginName :{User.LoginName} exist");
+                    if (ctx.Users.Any(x => x.LoginName == User.LoginName && x.Id != dbUser.Id))
+                        throw new Exception($"User with loginName :{User.LoginName} exist");
 
-                   // if (!User.CreateTime.Equals(DateTime.MinValue))
-                     //   dbUser.CreateTime = User.CreateTime;
+                    if (!User.CreateTime.Equals(DateTime.MinValue))
+                        dbUser.CreateTime = User.CreateTime;
 
                    // throw new Exception("Hi");
                     dbUser.BirthDate = User.BirthDate;
@@ -48,17 +48,43 @@ namespace BLL
         }
         public static bool ValidateUser(string login, string password)
         {
+          // return true;
             var user = GetUser(Login: login);
             if (user != null)
             {
                 var salt = Convert.FromBase64String(user.Salt);
                 var passhash = BLL.Hash.GenerateSaltedHash(password, salt);
-
+           
                 var oldHash = Convert.FromBase64String(user.PasswordHash);
+               // return true;
                 if (BLL.Hash.CompareByteArrays(passhash, oldHash))
                     return BLL.Hash.CompareByteArrays(passhash, oldHash);
             }
             return false;
+        }
+
+
+        public static void CreatePost(PostDTO post)
+        {
+            using (var ctx = new DbEntities())
+            {
+                //var imgIds = post.Images.Select(x => x.Id).ToArray();
+                //var images = ctx.Images.Where(x => imgIds.Contains(x.Id)).ToList();
+
+                //if (images.Any(x => x.PostId.HasValue))
+                //  throw new Exception("Это чужие картинки!!!");
+
+                //var dbPost = AutoMapper.Mapper.Map<DAL.Post>(post);
+                var dbPost = new Post();
+                //  dbPost.Images.Clear();
+                //images.ForEach((x) => dbPost.Images.Add(x));
+                dbPost.CreateDate = DateTime.Now;
+              //  if (post. is int imgId)
+                //    dbUser.Avatars.Add(new Data.Entities.Avatar { ImageId = imgId });
+
+                ctx.Posts.Add(dbPost);
+                ctx.SaveChanges();
+            }
         }
         public static int CreateImage (ImageDTO Image)
         {
@@ -68,9 +94,38 @@ namespace BLL
                 image.BlobId = Image.BlobId;
                 image.MymeType = Image.MymeType;
                 image.UserId = Image.UserId;
+               // image.Avatar
                 var dbImg = ctx.Images.Add(image);
                 ctx.SaveChanges();
                 return dbImg.Id;
+            }
+
+        }
+
+        public static List<int> GetMyImagesIds(int UserId)
+        {
+            var res = new List<int>();
+            using (var ctx = new DbEntities())
+            {
+                //  res.AddRange(ctx.Images.Find(x => x.UserId == UserId);
+                res.AddRange(ctx.Images.Where(x => x.UserId == UserId).Select(x => x.Id));
+               // ctx.Images.All();
+            }
+
+            return res;
+        }
+
+        public static void DelImage(long ImageId)
+        {
+            using (var ctx = new DbEntities())
+            {
+                var img = ctx.Images.FirstOrDefault(x => x.Id == ImageId);
+                if (img == null)
+                    throw new Exception("Not found image");
+
+                ctx.Images.Remove(img);
+
+                ctx.SaveChanges();
             }
 
         }
@@ -119,6 +174,8 @@ namespace BLL
         {
             if (!id.HasValue && string.IsNullOrEmpty(Login))
                 return null;
+                //throw new Exception($"Not  User with ID:");
+          //  return null;
             try
             {
                 using (var ctx = new DbEntities())
@@ -135,7 +192,17 @@ namespace BLL
                         user.CreateTime = dbUser.CreateTime;
                         user.Salt = dbUser.Salt;
                         user.IsProfileShared = dbUser.IsProfileShared;
-                        user.ImageAvatarId = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id).ImageId;
+                        var Avatar = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id);
+                        if (Avatar is Avatar)
+                        {
+                            user.ImageAvatarId = Avatar.ImageId;
+                        }
+                        else
+                        {
+                            user.ImageAvatarId = null;
+                        }
+                       // user.ImageAvatarId = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id).ImageId;
+                        //throw new Exception($"No User with ID:{id}");
                         return user;
                     }
 

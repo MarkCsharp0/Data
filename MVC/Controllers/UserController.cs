@@ -28,7 +28,7 @@ namespace MVC.Controllers
 
         public ActionResult LogOff()
         {
-            HttpCookie cookie = new HttpCookie("Cookie32", "");
+            HttpCookie cookie = new HttpCookie("Cookie25", "");
             cookie.Expires = DateTime.Now.AddYears(-1);
             Response.Cookies.Add(cookie);
             FormsAuthentication.SignOut();
@@ -49,7 +49,12 @@ namespace MVC.Controllers
             {
                 if (Membership.ValidateUser(model.LoginName, model.Password))
                 {
+                    if (model.LoginName.Equals("") || model.LoginName == null)
+                    {
+                        return RedirectToAction("reguser", "user");
+                    }
                     var user = (CustomMembershipUser)Membership.GetUser(model.LoginName, false);
+                  //  var user  = DbManager.GetUser(Login: model.LoginName);
                     if (user != null)
                     {
                         UserSerializeModel userModel = new UserSerializeModel()
@@ -65,8 +70,9 @@ namespace MVC.Controllers
                             );
 
                         string enTicket = FormsAuthentication.Encrypt(authTicket);
-                        HttpCookie cookie = new HttpCookie("Cookie32", enTicket);
+                        HttpCookie cookie = new HttpCookie("Cookie25", enTicket);
                         Response.Cookies.Add(cookie);
+                     //   return RedirectToAction("reguser", "user");
                     }
 
           
@@ -125,6 +131,7 @@ namespace MVC.Controllers
             model.LoginName = t.LoginName;
             model.Birthdate = t.BirthDate;
             model.Nickname = t.Nickname;
+            model.ImageAvatarId = t.ImageAvatarId;
             return View(model);
         }
 
@@ -215,11 +222,18 @@ namespace MVC.Controllers
 
         private static string _blobStoragePath = ConfigurationManager.AppSettings["BlobStoragePath"];
 
+      /*  [HttpPost] public JsonResult UploadPostImage(HttpPostedFileBase upload)
+        {
+
+
+        }*/
+
         [HttpPost]
         public JsonResult Upload(HttpPostedFileBase upload)
         {
             var blobId = Guid.NewGuid();
             var filename = blobId.ToString("N");
+         // var r = System.Web.HttpContext.Current.Request.Form["das"];
             var pic = System.Web.HttpContext.Current.Request.Files["file"];
             upload = new HttpPostedFileWrapper(pic);
 

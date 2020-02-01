@@ -16,6 +16,8 @@ namespace BLL.DTO
 
         public string Description { get; set; }
 
-        public List<PostImageDTO> PostImages { get; set; }
+        public List<int> ImageIds { get; set; }
+
+        public List<int> Comments { get; set; }
     }
 }

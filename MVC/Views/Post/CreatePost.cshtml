@@ -1,28 +1,20 @@
-﻿@model BLL.DTO.PostDTO
+﻿@model MVC.Models.PostModel
 
 @{
     ViewBag.Title = "CreatePost";
 }
-
+    <style>
+        .Img_Preview {
+            max-height: 100px;
+            max-width: 100px;
+            border-radius: 5px;
+        }
+    </style>
 <h2>CreatePost</h2>
 
 <script>
-
-     function Saveform() {
-        var fd = getFormData("PostForm");
-        var images = $.map($(".Img_Preview"), function (item,i) {
-            return { Id:$(item).data('image-id') };
-        });
-        fd["Images"] = images;
-        $.post('@Url.Action("CreatePost")', fd).done(function (res) {
-            if (res.Success)
-                alert("Successful");
-            else
-                alert(res.Result);
-        });
-    }
-
-
+    var imageIds = JSON.parse("@Json.Encode(Model.ImageIds)");
+  
     function UploadImage(elem) {
         var url_t = "@Url.Action("Get", "Image")/";
         if (elem.files.length != 1) {
@@ -37,10 +29,9 @@
                     contentType: false,
                     processData: false,
                     data: fd,
-                    success: function (result) {
+                    success: function (res) {
+                        imageIds.push(res.ImageId);
                         $("#PicturesDiv").append("<img src='@Url.Action("Get", "Image")/" + res.ImageId + "'  class='Img_Preview'  data-image-id='" + res.ImageId + "'/>")
-                    var html = $(elem).parent().html();
-                    $(elem).parent().html(html);
                     },
                     error: function (xhr, status, p3) {
                         alert(xhr.responseText);
@@ -49,6 +40,21 @@
                      //   $(".UploadLabel").html($(".UploadLabel").html());
                     }
                 });
+    }
+
+
+    function SaveForm() {
+        var post={
+            "ImageIds": imageIds,
+            "Description": $("#Description").val(),
+            "Location": ymaps.geolocation.city,
+            "Id": "@Model.Id",
+        }
+        $.post('@Url.Action("CreatePost")', post).done(function (res) {
+            alert("Good")
+        });
+        console.log(post);
+        
     }
 </script>
 
@@ -62,13 +68,14 @@
     }
 </div>
 
-<div id="PictureUpload">
+<div id="PictureUpload" class="UploadLabel">
     <input type="file" name="AvatarImage" onchange="UploadImage(this);" class="form-control" accept=".jpg,.png,.gif" />
 </div>
 
 <div class="form-horizontal PostForm">
     <h4>PostDTO</h4>
     <hr />
+    @Html.HiddenFor(x => x.Id)
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <div class="form-group">
@@ -82,7 +89,7 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="button" value="Create" class="btn btn-default" />
+            <input type="button" value="Create" onclick="SaveForm();" class="btn btn-default" />
         </div>
     </div>
 </div>

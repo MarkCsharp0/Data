@@ -225,8 +225,28 @@ namespace MVC.Controllers
       /*  [HttpPost] public JsonResult UploadPostImage(HttpPostedFileBase upload)
         {
 
+        
 
         }*/
+
+
+        [HttpGet]
+
+        public ActionResult TestFilter()
+        {
+            return View();
+
+
+        }
+
+        [HttpGet]
+
+        public ActionResult TestGeoLocation()
+        {
+            return View();
+
+
+        }
 
         [HttpPost]
         public JsonResult Upload(HttpPostedFileBase upload)

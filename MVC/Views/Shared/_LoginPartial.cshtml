@@ -8,7 +8,7 @@
         <li>
             @Html.ActionLink("Hello " + User.Identity.Name + "!", "ViewProfile", "User", routeValues: null, htmlAttributes: new { title = "Manage" })
         </li>
-        <li>@Html.ActionLink("CreatePost", "CreatePost", "Post", routeValues: null, htmlAttributes: new { id = "postLink" })</li>
+        <li>@Html.ActionLink("Posts", "Index", "Post", routeValues: null, htmlAttributes: new { id = "postLink" })</li>
         <li>@Html.ActionLink("EditProfile", "EditProfile", "User", routeValues: null, htmlAttributes: new { id = "editLink" })</li>
         <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
     </ul>

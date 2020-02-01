@@ -9,8 +9,8 @@ namespace MVC.Controllers
     public class ImageController : Controller
     {
         // GET: Image
-        public ActionResult Index()
-        {
+        public ActionResult Index() { 
+        
             return View();
         }
 

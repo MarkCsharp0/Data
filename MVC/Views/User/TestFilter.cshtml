@@ -1,0 +1,178 @@
+﻿
+@{
+    ViewBag.Title = "TestFilter";
+}
+
+<h2>TestFilter</h2>
+
+<script>
+
+    function Filter(elem) {
+
+        Caman('#example', function () {
+          
+    this.brightness(10);
+    this.contrast(30);
+    this.sepia(60);
+    this.saturation(-30);
+    this.render();
+  });
+
+    }
+    function Nostalgia(elem) {
+        Caman('#example',  function () {
+        this.nostalgia().render();
+    });
+
+    }
+
+    function Lomo(elem) {
+        Caman('#example',  function () {
+        this.lomo().render();
+    });
+
+    }
+
+     function Vintage(elem) {
+        Caman('#example',  function () {
+        this.vintage().render();
+    });
+
+    }
+
+     function Majesty(elem) {
+        Caman('#example',  function () {
+        this.herMajesty().render();
+    });
+
+    }
+
+    function Emboss(elem) {
+        Caman('#example',  function () {
+        this.emboss().render();
+    });
+
+
+    }
+
+     function Noise(elem) {
+        Caman('#example',  function () {
+        this.noise(10);
+        this.render();
+    });
+
+    }
+
+    function Love(elem) {
+        Caman('#example',  function () {
+        this.love().render();
+    });
+
+    }
+
+
+         function component()
+{
+    var x = document.getElementById('example');
+    context = x.getContext('2d');
+    var img = new Image();  // Создание нового объекта изображения
+    img.src = "@Url.Action("Get", "Image")/1";
+    context.drawImage(img, 0, 0);
+}
+</script>
+
+<canvas id="example" width="600" height="401" data-caman-id="1"></canvas>
+
+<div id="Filters">
+
+    <div class="Filter">
+        <div class="FilterName">
+            <p>brightness</p>
+        </div>
+
+        <div class="FilterSetting">
+            <input type="range"
+                   min="-100"
+                   max="100"
+                   step="1"
+                   value="0"
+                   data-filter="brightness">
+            <span class="FilterValue">0</span>
+        </div>
+    </div>
+    <div class="Filter">
+        <div class="FilterName">
+            <p>contrast</p>
+        </div>
+
+        <div class="FilterSetting">
+            <input type="range"
+                   min="-100"
+                   max="100"
+                   step="1"
+                   value="0"
+                   data-filter="contrast">
+            <span class="FilterValue">0</span>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Draw" onclick="component();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Filter" onclick="Filter();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Majesty" onclick="Majesty();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Lomo" onclick="Lomo();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Nostalgia" onclick="Nostalgia();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Vintage" onclick="Vintage();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Emboss" onclick="Emboss();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Noise" onclick="Noise();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Love" onclick="Love();" class="btn btn-default" />
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Create" onclick="Filter(this);" class="btn btn-default" />
+    </div>
+</div>

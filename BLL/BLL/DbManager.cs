@@ -68,20 +68,22 @@ namespace BLL
         {
             using (var ctx = new DbEntities())
             {
-                //var imgIds = post.Images.Select(x => x.Id).ToArray();
-                //var images = ctx.Images.Where(x => imgIds.Contains(x.Id)).ToList();
-
-                //if (images.Any(x => x.PostId.HasValue))
-                //  throw new Exception("Это чужие картинки!!!");
-
-                //var dbPost = AutoMapper.Mapper.Map<DAL.Post>(post);
+                
                 var dbPost = new Post();
-                //  dbPost.Images.Clear();
-                //images.ForEach((x) => dbPost.Images.Add(x));
+               
                 dbPost.CreateDate = DateTime.Now;
-              //  if (post. is int imgId)
-                //    dbUser.Avatars.Add(new Data.Entities.Avatar { ImageId = imgId });
+                dbPost.Description = post.Description;
+                dbPost.UserId = post.UserId;
+                dbPost.Location = post.Location;
+                dbPost.PostImages.Clear();
+                var i = 0;
+                post.ImageIds.Select(x => new PostImage()
+                {
+                    ImageId = x,
+                    Position = ++i
+                }).ToList().ForEach(dbPost.PostImages.Add);
 
+              
                 ctx.Posts.Add(dbPost);
                 ctx.SaveChanges();
             }
@@ -215,6 +217,88 @@ namespace BLL
                 return null;
             }
 
+        }
+
+        public static int CreateComment(CommentDTO com)
+        {
+            using (var ctx = new DbEntities())
+            {
+                var dbCom = new Comment();
+                dbCom.CommentText = com.CommentText;
+                dbCom.PostId = com.PostId;
+                dbCom.UserId = com.UserId;
+                ctx.Comments.Add(dbCom);
+                ctx.SaveChanges();
+
+                return dbCom.Id;
+            }
+        }
+
+        public static PostDTO GetPostById(int id)
+        {
+            //var res = (PostDTO)null;
+            using (var ctx = new DbEntities())
+            {
+                var dbpost = ctx.Posts.Where(x => x.Id == id).FirstOrDefault();
+                var post = new PostDTO
+                {
+                    ImageIds = new List<int>(),
+                    CreateDate = dbpost.CreateDate,
+                    Description = dbpost.Description,
+                    Location = dbpost.Location,
+                    UserId = dbpost.UserId
+                };
+                dbpost.PostImages.Select(x => x.ImageId).ToList().ForEach(post.ImageIds.Add);
+                return post;
+            }
+
+            
+        }
+
+        public static CommentDTO GetComment(int id)
+        {
+            using (var ctx = new DbEntities())
+            {
+                var ct = ctx.Comments
+                    .Where(x => x.Id == id)
+                    .FirstOrDefault();
+                var comDTO = new CommentDTO
+                {
+                    UserId = ct.UserId,
+                    PostId = ct.PostId,
+                    CommentText = ct.CommentText,
+                    Id = ct.Id
+                };
+
+                return comDTO;
+            }
+        }
+
+        public static List<PostDTO> GetPosts(int? lastId = null)
+        {
+            using (var ctx = new DbEntities())
+            {
+                var posts = ctx.Posts.AsNoTracking().AsQueryable();
+                if (lastId.HasValue)
+                    posts = posts.Where(x => x.Id < lastId);
+
+                var postsDTO = new List<PostDTO>();
+                var dbposts = posts.OrderByDescending(x => x.Id).Take(3).ToList();
+                foreach (Post dbpost in dbposts)
+                {
+                    var post = new PostDTO();
+                    post.ImageIds = new List<int>();
+                    post.CreateDate = dbpost.CreateDate;
+                    post.Description = dbpost.Description;
+                    post.Location = dbpost.Location;
+                    post.UserId = dbpost.UserId;
+                    dbpost.PostImages.Select(x => x.ImageId).ToList().ForEach(post.ImageIds.Add);
+                    postsDTO.Add(post);
+                }
+
+                return postsDTO;
+
+            }
         }
 
     }

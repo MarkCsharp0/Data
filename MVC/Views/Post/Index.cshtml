@@ -1,0 +1,47 @@
+﻿@model List<MVC.Models.PostModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+    <style>
+        .PostImage {
+            max-height: 100px;
+            max-width: 100px;
+            border-radius: 5px;
+            cursor: crosshair;
+        }
+    </style>
+
+<h2>Index</h2>
+
+<li>@Html.ActionLink("CreatePost", "CreatePost", "Post", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+
+@foreach (var post in Model)
+{
+<div>
+   
+    <div>
+        @post.Location<br />
+    </div>
+    <div>
+        @foreach (var imgId in post.ImageIds)
+        {
+            <img class="PostImage" title="delete" src="@Url.Action("Get", "Image")/@imgId" />
+
+        }
+    </div>
+    <div>
+        Description - @post.Description<br />
+        UserName -@post.UserId
+    </div>
+    <button class="ViewCommentsButton" data-toogle="view">ViewComments</button>
+
+    <div class="AddCommentDiv" style="display:none">
+        <textarea class="CommentText"></textarea>
+        <button class="SendCommentText" onclick="SaveComment(@post.Id)">Send</button>
+    </div>
+    <button class="AddCommentButton" onclick="ShowTextArea()">AddComment</button>
+    <hr />
+</div>
+}

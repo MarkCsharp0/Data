@@ -1,0 +1,60 @@
+﻿@model MVC.Models.PostModel
+
+@{
+    ViewBag.Title = "GetPost";
+}
+
+<h2>GetPost</h2>
+
+<style>
+    .PostImage {
+        max-height: 300px;
+        max-width: 300px;
+        border-radius: 5px;
+        cursor: crosshair;
+    }
+</style>
+
+<div>
+    <h4>PostModel</h4>
+    <hr />
+    <div>
+        @foreach (var imgId in Model.ImageIds)
+        {
+            <img class="PostImage" title="ww" src="@Url.Action("Get", "Image")/@imgId" />
+
+        }
+    </div>
+    <hr />
+
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

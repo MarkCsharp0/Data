@@ -64,39 +64,85 @@ namespace BLL
         }
 
 
-        public static void CreatePost(PostDTO post)
+        public static void CreateUpdatePost(PostDTO post)
         {
             using (var ctx = new DbEntities())
             {
-                
-                var dbPost = new Post();
-               
-                dbPost.CreateDate = DateTime.Now;
-                dbPost.Description = post.Description;
-                dbPost.UserId = post.UserId;
-                dbPost.Location = post.Location;
-                dbPost.PostImages.Clear();
-                var i = 0;
-                post.ImageIds.Select(x => new PostImage()
+                try
                 {
-                    ImageId = x,
-                    Position = ++i
-                }).ToList().ForEach(dbPost.PostImages.Add);
 
-              
-                ctx.Posts.Add(dbPost);
-                ctx.SaveChanges();
+                    if (ctx.Posts.Find(post.Id) is Post oldPost)
+                    {
+                        // AutoMapper.Mapper.Map(post, dbPost);
+                        oldPost.CreateDate = DateTime.Now;
+                        oldPost.Description = post.Description;
+                        oldPost.UserId = post.UserId;
+                        oldPost.Location = post.Location;
+                        oldPost.PostImages.Clear();
+                        //oldPost.Comments.Add();
+                        //oldPost.Comments.Clear();
+                        var i = 0;
+                        post.ImageIds.Select(x => new PostImage()
+                        {
+                            ImageId = x,
+                            Position = ++i
+                        }).ToList().ForEach(oldPost.PostImages.Add);
+                            
+
+                    }
+                    else
+                    {
+
+                        Post dbPost = new Post
+                        {
+                            CreateDate = DateTime.Now,
+                            Description = post.Description,
+                            UserId = post.UserId,
+                            Location = post.Location
+                        };
+                        dbPost.PostImages.Clear();
+                        
+                //        dbPost.Comments.Clear();
+                        var i = 0;
+                        post.ImageIds.Select(x => new PostImage()
+                        {
+                            ImageId = x,
+                            Position = ++i
+                        }).ToList().ForEach(dbPost.PostImages.Add);
+                      /*      if (post.Comments != null)
+                           {
+                               post.Comments.Select(x => new Comment()
+                               {
+                                   Id = x,
+                                   CommentText = GetComment(x).CommentText,
+                                   UserId = GetComment(x).UserId,
+                                   PostId = GetComment(x).PostId
+                               }).ToList().ForEach(dbPost.Comments.Add);
+                           }*/
+
+                        ctx.Posts.Add(dbPost);
+                    }
+
+                    ctx.SaveChanges();
+                }
+
+            catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
         public static int CreateImage (ImageDTO Image)
         {
             using (var ctx = new DbEntities())
             {
-                var image = new Image();
-                image.BlobId = Image.BlobId;
-                image.MymeType = Image.MymeType;
-                image.UserId = Image.UserId;
-               // image.Avatar
+                var image = new Image
+                {
+                    BlobId = Image.BlobId,
+                    MymeType = Image.MymeType,
+                    UserId = Image.UserId
+                };
+                // image.Avatar
                 var dbImg = ctx.Images.Add(image);
                 ctx.SaveChanges();
                 return dbImg.Id;
@@ -137,11 +183,13 @@ namespace BLL
             using (var ctx = new DbEntities())
             {
                 var image = ctx.Images.Find(id);
-                var ImageDTO = new ImageDTO();
-                ImageDTO.Id = image.Id;
-                ImageDTO.MymeType = image.MymeType;
-                ImageDTO.UserId = image.UserId;
-                ImageDTO.BlobId = image.BlobId;
+                var ImageDTO = new ImageDTO
+                {
+                    Id = image.Id,
+                    MymeType = image.MymeType,
+                    UserId = image.UserId,
+                    BlobId = image.BlobId
+                };
                 return ImageDTO;
             }
         }
@@ -185,15 +233,17 @@ namespace BLL
                     var dbUser = ctx.Users.FirstOrDefault(x => (x.Id == id || x.LoginName == Login));
                     if (dbUser != null)
                     {
-                        UserDTO user = new UserDTO();
-                        user.BirthDate = dbUser.BirthDate;
-                        user.Id = dbUser.Id;
-                        user.LoginName = dbUser.LoginName;
-                        user.Nickname = dbUser.Nickname;
-                        user.PasswordHash = dbUser.PasswordHash;
-                        user.CreateTime = dbUser.CreateTime;
-                        user.Salt = dbUser.Salt;
-                        user.IsProfileShared = dbUser.IsProfileShared;
+                        UserDTO user = new UserDTO
+                        {
+                            BirthDate = dbUser.BirthDate,
+                            Id = dbUser.Id,
+                            LoginName = dbUser.LoginName,
+                            Nickname = dbUser.Nickname,
+                            PasswordHash = dbUser.PasswordHash,
+                            CreateTime = dbUser.CreateTime,
+                            Salt = dbUser.Salt,
+                            IsProfileShared = dbUser.IsProfileShared
+                        };
                         var Avatar = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id);
                         if (Avatar is Avatar)
                         {
@@ -223,10 +273,12 @@ namespace BLL
         {
             using (var ctx = new DbEntities())
             {
-                var dbCom = new Comment();
-                dbCom.CommentText = com.CommentText;
-                dbCom.PostId = com.PostId;
-                dbCom.UserId = com.UserId;
+                var dbCom = new Comment
+                {
+                    CommentText = com.CommentText,
+                    PostId = com.PostId,
+                    UserId = com.UserId
+                };
                 ctx.Comments.Add(dbCom);
                 ctx.SaveChanges();
 
@@ -243,12 +295,14 @@ namespace BLL
                 var post = new PostDTO
                 {
                     ImageIds = new List<int>(),
+                    Comments = new List<int>(),
                     CreateDate = dbpost.CreateDate,
                     Description = dbpost.Description,
                     Location = dbpost.Location,
                     UserId = dbpost.UserId
                 };
                 dbpost.PostImages.Select(x => x.ImageId).ToList().ForEach(post.ImageIds.Add);
+                dbpost.Comments.Select(x => x.Id).ToList().ForEach(post.Comments.Add);
                 return post;
             }
 
@@ -286,13 +340,18 @@ namespace BLL
                 var dbposts = posts.OrderByDescending(x => x.Id).Take(3).ToList();
                 foreach (Post dbpost in dbposts)
                 {
-                    var post = new PostDTO();
-                    post.ImageIds = new List<int>();
-                    post.CreateDate = dbpost.CreateDate;
-                    post.Description = dbpost.Description;
-                    post.Location = dbpost.Location;
-                    post.UserId = dbpost.UserId;
+                    var post = new PostDTO
+                    {
+                        ImageIds = new List<int>(),
+                        Comments = new List<int>(),
+                        CreateDate = dbpost.CreateDate,
+                        Description = dbpost.Description,
+                        Location = dbpost.Location,
+                        UserId = dbpost.UserId,
+                        Id = dbpost.Id
+                    };
                     dbpost.PostImages.Select(x => x.ImageId).ToList().ForEach(post.ImageIds.Add);
+                    dbpost.Comments.Select(x => x.Id).ToList().ForEach(post.Comments.Add);
                     postsDTO.Add(post);
                 }
 

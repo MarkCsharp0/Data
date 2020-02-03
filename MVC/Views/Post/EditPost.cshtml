@@ -1,0 +1,66 @@
+﻿@model MVC.Models.PostModel
+
+@{
+    ViewBag.Title = "EditPost";
+}
+
+<h2>EditPost</h2>
+
+
+<script>
+    var imageIds = JSON.parse("@Json.Encode(Model.ImageIds)");
+    var comments = JSON.parse("@Json.Encode(Model.Comments)");
+
+    function SaveForm() {
+        var post={
+            "ImageIds": imageIds,
+            "Description": $("#Description").val(),
+            "Location": $("#Location").val(),
+            "Comments": comments,
+            "Id": $("#Id").val()
+        }
+        var str = '@Url.Action("CreatePost")/' + $("#Id").val()
+        $.post(str, post).done(function (res) {
+            alert("Good")
+        });
+        console.log(post);
+        console.log(str)
+
+    }
+
+</script>
+
+    <div>
+        @foreach (var imgId in Model.ImageIds)
+        {
+            <img class="PostImage" title="ww" src="@Url.Action("Get", "Image")/@imgId" />
+
+        }
+    </div>
+
+    <div class="form-horizontal">
+        <h4>PostModel</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.Location)
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" onclick="SaveForm();" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace MVC.Models
 {
@@ -23,7 +20,7 @@ namespace MVC.Models
         //    [Required]
         [Display(Name = "Настройки приватности")]
         public bool SharedProfile { get; set; }
-       // public int Id { get; set; }
+        // public int Id { get; set; }
 
 
     }

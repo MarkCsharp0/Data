@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using MVC.Models;
-using BLL;
-using System.Web.Security;
+﻿using BLL;
 using MVC.CustomAuth;
+using MVC.Models;
 using Newtonsoft.Json;
-using System.Web.Hosting;
+using System;
 using System.Configuration;
+using System.Web;
+using System.Web.Hosting;
+using System.Web.Mvc;
+using System.Web.Security;
 
 namespace MVC.Controllers
 {
@@ -38,7 +36,7 @@ namespace MVC.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            
+
             return View();
         }
 
@@ -54,7 +52,7 @@ namespace MVC.Controllers
                         return RedirectToAction("reguser", "user");
                     }
                     var user = (CustomMembershipUser)Membership.GetUser(model.LoginName, false);
-                  //  var user  = DbManager.GetUser(Login: model.LoginName);
+                    //  var user  = DbManager.GetUser(Login: model.LoginName);
                     if (user != null)
                     {
                         UserSerializeModel userModel = new UserSerializeModel()
@@ -72,11 +70,11 @@ namespace MVC.Controllers
                         string enTicket = FormsAuthentication.Encrypt(authTicket);
                         HttpCookie cookie = new HttpCookie("Cookie25", enTicket);
                         Response.Cookies.Add(cookie);
-                     //   return RedirectToAction("reguser", "user");
+                        //   return RedirectToAction("reguser", "user");
                     }
 
-          
-                       return RedirectToAction("Index", "Home");
+
+                    return RedirectToAction("Index", "Home");
                 }
             }
             ModelState.AddModelError("", "Username or Password invalid");
@@ -95,7 +93,7 @@ namespace MVC.Controllers
         {
             var model = new ChangePasswordModel();
             model.LoginName = User.Identity.Name;
-           // var t = DbManager.GetUser(Login: model.LoginName);
+            // var t = DbManager.GetUser(Login: model.LoginName);
 
             return View(model);
         }
@@ -109,14 +107,15 @@ namespace MVC.Controllers
                 ModelState.AddModelError("", "Something wrong");
                 return View(model);
             }
-           // var user = (CustomMembershipUser)Membership.GetUser(model.LoginName, false);
+            // var user = (CustomMembershipUser)Membership.GetUser(model.LoginName, false);
             //user.ChangePassword()
             var result = DbManager.ChangePassword(model.LoginName, model.OldPassword, model.NewPassword);
             if (result)
             {
                 ModelState.AddModelError("", "Something wrong");
                 return RedirectToAction("ViewProfile");
-            } else
+            }
+            else
             {
                 return View(model);
             }
@@ -156,7 +155,7 @@ namespace MVC.Controllers
         public ActionResult EditProfile(UserModel model)
         {
             BLL.DTO.UserDTO UserDTO = new BLL.DTO.UserDTO();
-            var user = DbManager.GetUser(Login:User.Identity.Name);
+            var user = DbManager.GetUser(Login: User.Identity.Name);
             UserDTO.Id = model.Id;
             UserDTO.LoginName = model.LoginName;
             UserDTO.IsProfileShared = model.SharedProfile;
@@ -173,26 +172,26 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-           
+
                 ModelState.AddModelError("", "Something wrong");
                 return View(model);
             }
-          
+
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RegUser(RegUserModel model) 
+        public ActionResult RegUser(RegUserModel model)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Username or Password invalid");
                 return View(model);
             }
-    
+
             var salt = Hash.CreateSalt(16);
             var passhash = Hash.GenerateSaltedHash(model.Password, salt);
-           // Console.WriteLine("Start");
+            // Console.WriteLine("Start");
             var user = new BLL.DTO.UserDTO
             {
                 BirthDate = model.BirthDate,
@@ -204,11 +203,11 @@ namespace MVC.Controllers
                 PasswordHash = Convert.ToBase64String(passhash)
             };
 
-           
+
             try
             {
                 DbManager.CreateOrUpdateUser(user);
-            
+
             }
             catch (Exception ex)
             {
@@ -222,12 +221,12 @@ namespace MVC.Controllers
 
         private static string _blobStoragePath = ConfigurationManager.AppSettings["BlobStoragePath"];
 
-      /*  [HttpPost] public JsonResult UploadPostImage(HttpPostedFileBase upload)
-        {
+        /*  [HttpPost] public JsonResult UploadPostImage(HttpPostedFileBase upload)
+          {
 
-        
 
-        }*/
+
+          }*/
 
 
         [HttpGet]
@@ -253,14 +252,15 @@ namespace MVC.Controllers
         {
             var blobId = Guid.NewGuid();
             var filename = blobId.ToString("N");
-         // var r = System.Web.HttpContext.Current.Request.Form["das"];
+            // var r = System.Web.HttpContext.Current.Request.Form["das"];
             var pic = System.Web.HttpContext.Current.Request.Files["file"];
             upload = new HttpPostedFileWrapper(pic);
 
             if (upload != null)
             {
                 upload.SaveAs(System.IO.Path.Combine(HostingEnvironment.ApplicationPhysicalPath, _blobStoragePath, filename));
-            } else
+            }
+            else
             {
                 return Json(new { ImageId = -1 });
             }

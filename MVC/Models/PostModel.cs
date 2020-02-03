@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace MVC.Models
 {
@@ -11,7 +8,7 @@ namespace MVC.Models
 
         public string Location { get; set; }
 
-      
+
         public string Description { get; set; }
 
         public int UserId { get; set; }
@@ -19,6 +16,8 @@ namespace MVC.Models
         public string UserName { get; set; }
 
         public List<int> ImageIds { get; set; }
+
+        public List<int> Comments { get; set; }
 
     }
 }

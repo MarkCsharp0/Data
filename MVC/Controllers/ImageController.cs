@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using BLL;
 using System.Web.Mvc;
-using BLL;
 namespace MVC.Controllers
 {
     public class ImageController : Controller
     {
         // GET: Image
-        public ActionResult Index() { 
-        
+        public ActionResult Index()
+        {
+
             return View();
         }
 
-       public ActionResult Get (int? id)
+        public ActionResult Get(int? id)
         {
             if (id.HasValue)
             {
@@ -22,7 +19,8 @@ namespace MVC.Controllers
                 var ba = Utilities.FileManager.ReadFile(image.BlobId);
                 return File(ba, image.MymeType);
 
-            } else
+            }
+            else
             {
                 return HttpNotFound("File not found");
             }

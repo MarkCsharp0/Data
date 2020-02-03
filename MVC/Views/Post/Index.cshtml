@@ -15,12 +15,75 @@
 
 <h2>Index</h2>
 
-<li>@Html.ActionLink("CreatePost", "CreatePost", "Post", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+<script>
+    var commentsId = new Object();
+
+
+    function ShowTextArea(Id) {
+        var str = "#" + "AddCommentForPost_" + Id;
+      //  alert(Id);
+        $(str).show();
+    }
+
+     function HideTextArea(Id) {
+        var str = "#" + "AddCommentForPost_" + Id;
+      //  alert(Id);
+        $(str).hide();
+    }
+
+
+    function ViewComments(Id) {
+        var str = "#" + "Comments" + Id;
+       // alert(Id)
+        $(str).show();
+        var array = commentsId[Id]
+        for (var elem in array) {
+            var str = "@Url.Action("GetComment", "Post")/" + elem;
+            $.post(str).done(function (res) {
+            $(str).append("<p>" + res.String + "</p>")
+        });
+
+        }
+        
+
+
+    }
+    function SaveComment(Id) {
+        var selector = ".CommentfromPost_" + Id
+        var text = $(selector).val();
+        alert(text)
+        alert(selector)
+        var com={
+            "commentText": text,
+            "postId":Id
+        }
+        $.post('@Url.Action("AddComment")', com).done(function (res) {
+            alert("Good")
+            commentsId[Id].push(res.Result)
+            HideTextArea(Id)
+        });
+        console.log(post);
+    }
+
+    function LoadComments(Id, postComments) {
+        var comments = JSON.parse(postComments);
+        commentsId[Id] = comments
+
+    }
+
+
+</script>
+
+
+
+<li>@Html.ActionLink("CreatePost", "CreatePost", "Post", routeValues: null,  htmlAttributes: new { id = "registerLink" })</li>
 
 @foreach (var post in Model)
 {
 <div>
-   
+    <button class="FillComments" data-toogle="view" onclick="LoadComments(@post.Id.ToString(), @Json.Encode(@post.Comments))">LoadComments</button>
+    <a href=@($"/post/getpost/{post.Id}")>ViewPost</a>
+    <a href=@($"/post/editpost/{post.Id}")>EditPost</a>
     <div>
         @post.Location<br />
     </div>
@@ -34,14 +97,19 @@
     <div>
         Description - @post.Description<br />
         UserName -@post.UserId
-    </div>
-    <button class="ViewCommentsButton" data-toogle="view">ViewComments</button>
 
-    <div class="AddCommentDiv" style="display:none">
-        <textarea class="CommentText"></textarea>
+    </div>
+    <button class="ViewCommentsButton" data-toogle="view" onclick="ViewComments(@post.Id.ToString())">ViewComments</button>
+    <div id=@($"Comments{post.Id}") style="display:none">
+
+    </div>
+
+    <div class="AddCommentDiv" id=@($"AddCommentForPost_{post.Id}") style="display:none">
+        <textarea class=@($"CommentfromPost_{post.Id}")></textarea>
         <button class="SendCommentText" onclick="SaveComment(@post.Id)">Send</button>
     </div>
-    <button class="AddCommentButton" onclick="ShowTextArea()">AddComment</button>
+    <input type="button" value="AddComment" onclick="ShowTextArea(@post.Id.ToString());" class="btn btn-default" />
+
     <hr />
 </div>
 }

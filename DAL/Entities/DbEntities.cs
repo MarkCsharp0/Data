@@ -17,7 +17,7 @@ namespace Data.Entities
         }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+           modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Image> Images { get; set; }

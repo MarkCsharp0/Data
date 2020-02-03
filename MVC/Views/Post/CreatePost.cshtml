@@ -14,6 +14,7 @@
 
 <script>
     var imageIds = JSON.parse("@Json.Encode(Model.ImageIds)");
+    var comments = JSON.parse("@Json.Encode(Model.Comments)");
   
     function UploadImage(elem) {
         var url_t = "@Url.Action("Get", "Image")/";
@@ -46,9 +47,10 @@
     function SaveForm() {
         var post={
             "ImageIds": imageIds,
+            "Comments":comments,
             "Description": $("#Description").val(),
             "Location": ymaps.geolocation.city,
-            "Id": "@Model.Id",
+            "Id": $("#Id").val(),
         }
         $.post('@Url.Action("CreatePost")', post).done(function (res) {
             alert("Good")

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Security;
 namespace MVC.CustomAuth
 {
@@ -31,7 +28,7 @@ namespace MVC.CustomAuth
 
         public override bool ChangePassword(string username, string oldPassword, string newPassword)
         {
-            
+
             return BLL.DbManager.ChangePassword(username, oldPassword, newPassword);
         }
 

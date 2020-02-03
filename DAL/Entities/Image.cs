@@ -19,7 +19,7 @@ namespace Data.Entities
 
         public virtual Avatar Avatar { get; set; }
 
-        public virtual PostImage PostImage { get; set; }
+      //  public virtual PostImage PostImage { get; set; }
 
 
     }

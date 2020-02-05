@@ -44,6 +44,15 @@
     <h4>UserModel</h4>
     <hr />
 
+    @foreach (var postId in Model.PostsId)
+    {
+
+        <div>
+            <a href=@($"/post/getpost/{postId}")>ViewPost</a>
+
+        </div>
+    }
+
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <label style="cursor:pointer" for="Avatar">
@@ -58,6 +67,7 @@
 
 
     @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.PostsId)
     @Html.HiddenFor(x => x.ImageAvatarId)
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">

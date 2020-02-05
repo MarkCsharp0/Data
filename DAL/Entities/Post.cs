@@ -17,7 +17,7 @@ namespace Data.Entities
             PostLikes = new HashSet<PostLike>();
         }
         public int Id { get; set; }
-        [System.ComponentModel.DataAnnotations.Schema.ForeignKey("User")]
+    
         public int UserId { get; set; }
         public DateTime CreateDate { get; set; }
         public string Location { get; set; }

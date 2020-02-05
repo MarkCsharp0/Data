@@ -14,7 +14,6 @@ namespace Data.Entities
         {
         
             Comments = new HashSet<Comment>();
-            Images = new HashSet<Image>();
             Likes = new HashSet<Like>();
             Subscribers = new HashSet<Subscriber>();
             Subscriptions = new HashSet<Subscriber>();
@@ -37,8 +36,6 @@ namespace Data.Entities
         public bool IsProfileShared { get; set; }
         public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<Avatar> Avatars { get; set; }
-
-        public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Subscriber> Subscribers { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }

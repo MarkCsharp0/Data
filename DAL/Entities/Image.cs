@@ -17,7 +17,7 @@ namespace Data.Entities
 
         public virtual User User { get; set; }
 
-        public virtual Avatar Avatar { get; set; }
+ //      public virtual Avatar Avatar { get; set; }
 
       //  public virtual PostImage PostImage { get; set; }
 

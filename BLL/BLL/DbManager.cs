@@ -25,15 +25,21 @@ namespace BLL
 
                    // throw new Exception("Hi");
                     dbUser.BirthDate = User.BirthDate;
-                    dbUser.Id = User.Id;
+                //   dbUser.Id = User.Id;
                     dbUser.LoginName = User.LoginName;
                     dbUser.Nickname = User.Nickname;
                     dbUser.PasswordHash = User.PasswordHash;
                     dbUser.CreateTime = User.CreateTime;
                     dbUser.Salt = User.Salt;
                     dbUser.IsProfileShared = User.IsProfileShared;
-
-                   if (User.ImageAvatarId is int imgId)
+                    User.PostsId.Select(x => new Post()
+                    {
+                        Id = x,
+                        CreateDate = GetPostById(x).CreateDate,
+                        Description = GetPostById(x).Description,
+                        Location = GetPostById(x).Location
+                    }).ToList().ForEach(dbUser.Posts.Add);
+                    if (User.ImageAvatarId is int imgId)
                         dbUser.Avatars.Add(new Data.Entities.Avatar { ImageId = imgId });
                     ctx.SaveChanges();
 
@@ -42,6 +48,7 @@ namespace BLL
             }
             catch (Exception ex)
             {
+                //ex.Message
                 throw;
             }
             // return -1;
@@ -76,7 +83,7 @@ namespace BLL
                         // AutoMapper.Mapper.Map(post, dbPost);
                         oldPost.CreateDate = DateTime.Now;
                         oldPost.Description = post.Description;
-                        oldPost.UserId = post.UserId;
+                       // oldPost.UserId = post.UserId;
                         oldPost.Location = post.Location;
                         oldPost.PostImages.Clear();
                         //oldPost.Comments.Add();
@@ -237,6 +244,7 @@ namespace BLL
                         {
                             BirthDate = dbUser.BirthDate,
                             Id = dbUser.Id,
+                            PostsId = new List<int>(),
                             LoginName = dbUser.LoginName,
                             Nickname = dbUser.Nickname,
                             PasswordHash = dbUser.PasswordHash,
@@ -244,6 +252,7 @@ namespace BLL
                             Salt = dbUser.Salt,
                             IsProfileShared = dbUser.IsProfileShared
                         };
+                        dbUser.Posts.Select(x => x.Id).ToList().ForEach(user.PostsId.Add);
                         var Avatar = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id);
                         if (Avatar is Avatar)
                         {
@@ -253,8 +262,8 @@ namespace BLL
                         {
                             user.ImageAvatarId = null;
                         }
-                       // user.ImageAvatarId = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id).ImageId;
-                        //throw new Exception($"No User with ID:{id}");
+                      
+                     
                         return user;
                     }
 
@@ -262,7 +271,7 @@ namespace BLL
                 }
             }
             catch (Exception ex)
-            {
+            { //ex.Message
                 //throw;
                 return null;
             }
@@ -325,6 +334,47 @@ namespace BLL
                 };
 
                 return comDTO;
+            }
+        }
+
+        public static List<UserDTO> GetUsers(int? lastId = null)
+        {
+            using (var ctx = new DbEntities())
+            {
+                var users = ctx.Users.AsNoTracking().AsQueryable();
+                if (lastId.HasValue)
+                    users = users.Where(x => x.Id < lastId);
+
+                var usersDTO = new List<UserDTO>();
+                var dbusers = users.OrderByDescending(x => x.Id).Take(3).ToList();
+                foreach (User dbUser in dbusers)
+                {
+                    var user = new UserDTO
+                    {
+                        BirthDate = dbUser.BirthDate,
+                        Id = dbUser.Id,
+                        LoginName = dbUser.LoginName,
+                        Nickname = dbUser.Nickname,
+                        PasswordHash = dbUser.PasswordHash,
+                        CreateTime = dbUser.CreateTime,
+                        Salt = dbUser.Salt,
+                        IsProfileShared = dbUser.IsProfileShared
+                    };
+                    dbUser.Posts.Select(x => x.Id).ToList().ForEach(user.PostsId.Add);
+                    var Avatar = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id);
+                    if (Avatar is Avatar)
+                    {
+                        user.ImageAvatarId = Avatar.ImageId;
+                    }
+                    else
+                    {
+                        user.ImageAvatarId = null;
+                    }
+                    usersDTO.Add(user);
+                }
+
+                return usersDTO;
+
             }
         }
 

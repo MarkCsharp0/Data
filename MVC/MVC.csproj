@@ -187,6 +187,7 @@
     <Content Include="Views\Post\View.cshtml" />
     <Content Include="Views\Post\GetPost.cshtml" />
     <Content Include="Views\Post\EditPost.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

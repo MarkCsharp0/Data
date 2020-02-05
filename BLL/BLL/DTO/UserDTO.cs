@@ -25,5 +25,7 @@ namespace BLL.DTO
         public DateTime CreateTime { get; set; }
 
         public bool IsProfileShared { get; set; }
+
+        public List<int> PostsId { get; set; }
     }
 }

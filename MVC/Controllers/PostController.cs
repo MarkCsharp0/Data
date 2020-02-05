@@ -30,6 +30,7 @@ namespace MVC.Controllers
                 Description = post.Description,
                 Location = post.Location,
                 UserId = post.UserId,
+                UserName = DbManager.GetUser(id:post.UserId).Nickname,
                 Id = post.Id
             };
             post.ImageIds.ForEach(fModel.ImageIds.Add);
@@ -71,6 +72,7 @@ namespace MVC.Controllers
                         Description = post.Description,
                         Location = post.Location,
                         UserId = post.UserId,
+                        UserName = DbManager.GetUser(id: post.UserId).Nickname,
                         Id = post.Id
                     };
                     //   fModel.UserName = CustomUser.Nickname;
@@ -189,7 +191,7 @@ namespace MVC.Controllers
                 var comments = post.Comments;
                 // comments.Add(comId);
                 post.Comments.Add(comId);
-                DbManager.CreateUpdatePost(post);
+              //  DbManager.CreateUpdatePost(post);
 
                 return Json(new { Result = comId });
 

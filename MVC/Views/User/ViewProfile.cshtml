@@ -15,7 +15,7 @@
         </dt>
 
         <dd>
-            <img class="AvatarImage" height="300" width="300"   title="Change" src="@Url.Action("Get", "Image", new {id=Model.ImageAvatarId })"
+            <img class="AvatarImage" height="300" width="300" title="Change" src="@Url.Action("Get", "Image", new {id=Model.ImageAvatarId })"
                  onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" />
         </dd>
         <dt>
@@ -52,4 +52,13 @@
 
     </dl>
 </div>
+
+@foreach (var postId in Model.PostsId)
+{
+
+<div>
+    <a href=@($"/post/getpost/{postId}")>ViewPost</a>
+    
+</div>
+}
 

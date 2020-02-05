@@ -11,12 +11,17 @@ namespace Data.Entities
     public class Avatar
     {
         [Key]
-        [ForeignKey("Image")]
+     
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int UserId { get; set; }
+        [Key]
+        [Column(Order = 1)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+       
         public int ImageId { get; set; }
 
-        public int UserId { get; set; }
-
-       public virtual User User { get; set; }
+     //  public virtual User User { get; set; }
 
       
         public virtual Image Image { get; set; }

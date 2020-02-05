@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVC.Models
@@ -19,5 +20,9 @@ namespace MVC.Models
         public int Id { get; set; }
 
         public int? ImageAvatarId { get; set; }
+
+        public List<int> PostsId { get; set; }
+
+        
     }
 }

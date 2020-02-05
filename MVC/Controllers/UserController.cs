@@ -1,8 +1,10 @@
 ﻿using BLL;
+using BLL.DTO;
 using MVC.CustomAuth;
 using MVC.Models;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Web;
 using System.Web.Hosting;
@@ -16,12 +18,31 @@ namespace MVC.Controllers
         // GET: User
         public ActionResult Index()
         {
-            return View();
-        }
+            try
+            {
+                var usersDTO = DbManager.GetUsers();
+                var model = new List<UserModel>();
+                foreach (UserDTO user in usersDTO)
+                {
 
-        public ActionResult Testik()
-        {
-            return View();
+                    var fModel = new UserModel
+                    {
+                        Id = user.Id,
+                        Birthdate = user.BirthDate,
+                        LoginName = user.LoginName,
+                        Nickname = user.Nickname,
+                        SharedProfile = user.IsProfileShared,
+                        ImageAvatarId = user.ImageAvatarId
+                    };
+                    model.Add(fModel);
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Login");
+
+            }
         }
 
         public ActionResult LogOff()
@@ -122,15 +143,36 @@ namespace MVC.Controllers
         }
 
         [Authorize]
-        public ActionResult ViewProfile()
+        public ActionResult ViewProfile(int? id)
         {
-            // var model = AutoMapper.Mapper.Map<Models.UserModel>(Data.BLL.Db.GetUser(User.Identity.Name));
-            var t = BLL.DbManager.GetUser(Login: User.Identity.Name);
-            UserModel model = new UserModel();
-            model.LoginName = t.LoginName;
-            model.Birthdate = t.BirthDate;
-            model.Nickname = t.Nickname;
-            model.ImageAvatarId = t.ImageAvatarId;
+            UserDTO user;
+            if (id.HasValue)
+            {
+               user = BLL.DbManager.GetUser(id: id);
+               var dUser = BLL.DbManager.GetUser(Login: User.Identity.Name);
+               if (dUser.Id != id)
+                {
+                    if (dUser.IsProfileShared)
+                    {
+                        return RedirectToAction("Testik");
+                    }
+                }
+            }
+            else
+            {
+                user = BLL.DbManager.GetUser(Login: User.Identity.Name);
+            }
+            UserModel model = new UserModel
+            {
+                LoginName = user.LoginName,
+                Birthdate = user.BirthDate,
+                PostsId = new List<int>(),
+                Nickname = user.Nickname,
+                SharedProfile = user.IsProfileShared,
+                ImageAvatarId = user.ImageAvatarId
+            };
+            user.PostsId.ForEach(model.PostsId.Add);
+
             return View(model);
         }
 
@@ -139,14 +181,20 @@ namespace MVC.Controllers
         public ActionResult EditProfile()
         {
             //var model = AutoMapper.Mapper.Map<Models.UserModel>(Data.BLL.Db.GetUser(User.Identity.Name));
-            var t = BLL.DbManager.GetUser(Login: User.Identity.Name);
-            UserModel model = new UserModel();
-            model.Id = t.Id;
-            model.LoginName = t.LoginName;
-            model.Birthdate = t.BirthDate;
-            model.Nickname = t.Nickname;
-            model.SharedProfile = t.IsProfileShared;
-            model.ImageAvatarId = t.ImageAvatarId;
+            var user = BLL.DbManager.GetUser(Login: User.Identity.Name);
+            UserModel model = new UserModel
+            {
+                Id = user.Id,
+                LoginName = user.LoginName,
+                PostsId = new List<int>(),
+                Birthdate = user.BirthDate,
+                Nickname = user.Nickname,
+                SharedProfile = user.IsProfileShared,
+                ImageAvatarId = user.ImageAvatarId
+            };
+            user.PostsId.ForEach(model.PostsId.Add);
+
+
             return View(model);
         }
 
@@ -165,6 +213,8 @@ namespace MVC.Controllers
             UserDTO.PasswordHash = user.PasswordHash;
             UserDTO.Salt = user.Salt;
             UserDTO.ImageAvatarId = model.ImageAvatarId;
+            UserDTO.PostsId = new List<int>();
+            model.PostsId.ForEach(UserDTO.PostsId.Add);
             try
             {
                 DbManager.CreateOrUpdateUser(UserDTO);
@@ -195,6 +245,7 @@ namespace MVC.Controllers
             var user = new BLL.DTO.UserDTO
             {
                 BirthDate = model.BirthDate,
+                PostsId = new List<int>(),
                 IsProfileShared = model.SharedProfile,
                 LoginName = model.LoginName,
                 Nickname = model.Nickname,

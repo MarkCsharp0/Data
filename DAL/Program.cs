@@ -24,7 +24,7 @@ namespace Data
                     CreateTime = new DateTime(2018, 5, 1, 8, 30, 52),
                     IsProfileShared = false
                 };
-               // db.Users.Add(first);
+               db.Users.Add(first);
                 db.SaveChanges();
             }
             Console.WriteLine("adwfewrg");

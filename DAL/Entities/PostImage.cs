@@ -12,11 +12,16 @@ namespace Data.Entities
     {
 
         [Key]
-        [ForeignKey("Image")]
-        public int ImageId { get; set; }
+        [Column(Order = 0)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int PostId { get; set; }
 
-        //public virtual Post Post { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Column(Order = 1)]
+        public int ImageId { get; set; }
+
+      //  public virtual Post Post { get; set; }
         
         public virtual Image Image { get; set; }
 

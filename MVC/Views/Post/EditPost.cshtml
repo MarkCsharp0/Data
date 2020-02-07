@@ -6,6 +6,14 @@
 
 <h2>EditPost</h2>
 
+<style>
+    .PostImage {
+        max-height: 300px;
+        max-width: 300px;
+        border-radius: 5px;
+        cursor: crosshair;
+    }
+</style>
 
 <script>
     var imageIds = JSON.parse("@Json.Encode(Model.ImageIds)");
@@ -39,7 +47,6 @@
     </div>
 
     <div class="form-horizontal">
-        <h4>PostModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)

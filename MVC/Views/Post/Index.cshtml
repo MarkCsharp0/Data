@@ -6,8 +6,8 @@
 
 <style>
     .PostImage {
-        max-height: 100px;
-        max-width: 100px;
+        max-height: 200px;
+        max-width: 200px;
         border-radius: 5px;
         cursor: crosshair;
     }
@@ -76,42 +76,43 @@
 
 
 
-<li>@Html.ActionLink("CreatePost", "CreatePost", "Post", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+<li>@Html.ActionLink(" ", "CreatePost", "Post", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "glyphicon glyphicon-plus" })</li>
 
 @foreach (var post in Model)
 {
 
     //@Html.HiddenFor(@post => @post.Id)
+<div>
+    <button class="FillComments" data-toogle="view" onclick="LoadComments(@post.Id.ToString(), @Json.Encode(@post.Comments))">LoadComments</button>
+    <a class ="glyphicon glyphicon-info-sign" href=@($"/post/getpost/{post.Id}")></a>
+    <hr />
+    <a class ="glyphicon glyphicon-edit" href=@($"/post/createpost/{post.Id}")></a>
     <div>
-        <button class="FillComments" data-toogle="view" onclick="LoadComments(@post.Id.ToString(), @Json.Encode(@post.Comments))">LoadComments</button>
-        <a href=@($"/post/getpost/{post.Id}")>ViewPost</a>
-        <a href=@($"/post/editpost/{post.Id}")>EditPost</a>
-        <div>
-            @post.Location<br />
-        </div>
-        <div>
-            @foreach (var imgId in post.ImageIds)
-            {
-                <img class="PostImage" title="delete" src="@Url.Action("Get", "Image")/@imgId" />
-
-            }
-        </div>
-        <div>
-            Description - @post.Description<br />
-            UserName -@post.UserName <br />
-            UserId -@post.UserId
-        </div>
-        <button class="ViewCommentsButton" data-toogle="view" onclick="ViewComments(@post.Id.ToString())">ViewComments</button>
-        <div id=@($"Comments{post.Id}") style="display:none">
-
-        </div>
-
-        <div class="AddCommentDiv" id=@($"AddCommentForPost_{post.Id}") style="display:none">
-            <textarea class=@($"CommentfromPost_{post.Id}")></textarea>
-            <button class="SendCommentText" onclick="SaveComment(@post.Id)">Send</button>
-        </div>
-        <input type="button" value="AddComment" onclick="ShowTextArea(@post.Id.ToString());" class="btn btn-default" />
-
-        <hr />
+        Location- @post.Location<br />
     </div>
+    <div>
+        @foreach (var imgId in post.ImageIds)
+        {
+            <img class="PostImage" title="delete" src="@Url.Action("Get", "Image")/@imgId" />
+
+        }
+    </div>
+    <div>
+        Description - @post.Description<br />
+        UserName -@post.UserName <br />
+        UserId -@post.UserId
+    </div>
+    <button class="ViewCommentsButton" data-toogle="view" onclick="ViewComments(@post.Id.ToString())">ViewComments</button>
+    <div id=@($"Comments{post.Id}") style="display:none">
+
+    </div>
+
+    <div class="AddCommentDiv" id=@($"AddCommentForPost_{post.Id}") style="display:none">
+        <textarea class=@($"CommentfromPost_{post.Id}")></textarea>
+        <button class="SendCommentText" onclick="SaveComment(@post.Id)">Send</button>
+    </div>
+    <input type="button" value="AddComment" onclick="ShowTextArea(@post.Id.ToString());" class="btn btn-default" />
+
+    <hr />
+</div>
 }

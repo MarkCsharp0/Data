@@ -16,7 +16,10 @@ namespace MVC.Controllers
         {
             var com = DbManager.GetComment(id.Value);
 
-            return Json(new { String = com.CommentText });
+            var user = DbManager.GetUser(com.UserId);
+           
+
+            return Json(new { Text = com.CommentText, Nick = user.Nickname});
 
         }
 
@@ -33,6 +36,7 @@ namespace MVC.Controllers
                 UserName = DbManager.GetUser(id:post.UserId).Nickname,
                 Id = post.Id
             };
+           
             post.ImageIds.ForEach(fModel.ImageIds.Add);
             post.Comments.ForEach(fModel.Comments.Add);
             return View(fModel);
@@ -118,12 +122,40 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
-        public ActionResult CreatePost()
+        [Authorize]
+        public ActionResult CreatePost(int? id)
         {
-            //  var CustomUser = (CustomPrincipal)User;
+              var CustomUser = (CustomPrincipal)User;
             //  ViewBag.Images = DbManager.GetMyImagesIds(CustomUser.UserId);
-            var model = new PostModel { ImageIds = new List<int>(), Comments = new List<int>(), UserName = User.Identity.Name };
-            return View(model);
+            if (id.HasValue)
+            {
+                var post = DbManager.GetPostById(id.Value);
+                var userId = CustomUser.UserId;
+                if (userId != post.UserId)
+                {
+                    ModelState.AddModelError("", "We don't have access");
+                    return RedirectToAction("Index");
+                }
+                var model = new PostModel
+                {
+                    Id = post.Id,
+                    Location = post.Location,
+                    UserId = post.UserId,
+                    Comments = new List<int>(),
+                    ImageIds = new List<int>(),
+                    Description = post.Description,
+                    UserName = DbManager.GetUser(id: post.UserId).Nickname
+                };
+                post.Comments.ForEach(model.Comments.Add);
+                post.ImageIds.ForEach(model.ImageIds.Add);
+                return View(model);
+            }
+            else
+            {
+                var model = new PostModel { ImageIds = new List<int>(), Comments = new List<int>(), UserName = User.Identity.Name, UserId = DbManager.GetUser(Login:User.Identity.Name).Id };
+                return View(model);
+            }
+            
         }
         [HttpPost]
         public JsonResult CreatePost(MVC.Models.PostModel model)
@@ -142,11 +174,13 @@ namespace MVC.Controllers
                     Description = model.Description,
                     Location = model.Location,
                     CreateDate = DateTime.Now,
-                    UserId = CustomUser.UserId
+                    UserId = model.UserId
                 };
+                
                 if (model.Id != 0)
                 {
                     post.Id = model.Id;
+                    post.UserId = model.UserId;
                 }
                 if (model.Comments != null)
                 {
@@ -187,12 +221,7 @@ namespace MVC.Controllers
 
                 var comId = DbManager.CreateComment(new BLL.DTO.CommentDTO { UserId = userId, CommentText = commentText, PostId = postId });
 
-                var post = DbManager.GetPostById(postId);
-                var comments = post.Comments;
-                // comments.Add(comId);
-                post.Comments.Add(comId);
-              //  DbManager.CreateUpdatePost(post);
-
+             
                 return Json(new { Result = comId });
 
             }

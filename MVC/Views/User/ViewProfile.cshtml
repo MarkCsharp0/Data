@@ -6,9 +6,16 @@
 
 <h2>View</h2>
 
+@foreach (var postId in Model.PostsId)
+{
+
+    <div>
+        <a href=@($"/post/getpost/{postId}")>ViewPost</a>
+
+    </div>
+}
+
 <div>
-    <h4>UserModel</h4>
-    <hr />
     <dl class="dl-horizontal">
         <dt>
 
@@ -53,12 +60,5 @@
     </dl>
 </div>
 
-@foreach (var postId in Model.PostsId)
-{
 
-<div>
-    <a href=@($"/post/getpost/{postId}")>ViewPost</a>
-    
-</div>
-}
 

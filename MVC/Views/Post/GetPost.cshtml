@@ -4,7 +4,7 @@
     ViewBag.Title = "GetPost";
 }
 
-<h2>GetPost</h2>
+<h2>Post</h2>
 
 <style>
     .PostImage {
@@ -15,9 +15,56 @@
     }
 </style>
 
+<script>
+    var imageIds = JSON.parse("@Json.Encode(Model.ImageIds)");
+    var comments = JSON.parse("@Json.Encode(Model.Comments)");
+
+     function ShowTextArea(Id) {
+        var str = "#" + "AddCommentForPost_" + Id;
+      //  alert(Id);
+        $(str).show();
+    }
+
+    function HideTextArea(Id) {
+        var str = "#" + "AddCommentForPost_" + Id;
+      //  alert(Id);
+        $(str).hide();
+    }
+
+    function ViewComment() {
+        for (var prop in comments) {
+            console.log(comments[prop])
+            $.post('@Url.Action("GetComment")/' + comments[prop]).done(function (res) {
+                var str1 = "<p> Author - " + res.Nick + "</p>";
+                var str = "<p style='border: 3px solid black; background-color: #d5d5d1; padding: 5px'>" + res.Text + "</p>";
+                $("#ComDiv").append(str);
+                $("#ComDiv").append(str1);
+                alert(str + str1);
+            });
+        }
+    }
+
+    function SaveComment(Id) {
+        var selector = ".CommentfromPost_" + Id
+        var text = $(selector).val();
+        alert(text);
+        alert(@(Model.Id));
+        var com={
+            "commentText": text,
+            "postId":Id
+        }
+        console.log(com);
+        $.post('@Url.Action("AddComment")', com).done(function (res) {
+            alert("Good")
+            comments.push(res.Result)
+            HideTextArea(Id)
+        });
+     
+    }
+</script>
 <div>
-    <h4>PostModel</h4>
-    <hr />
+    @Html.HiddenFor(model => model.UserId)
+    @Html.HiddenFor(model => model.Id)
     <div>
         @foreach (var imgId in Model.ImageIds)
         {
@@ -25,7 +72,28 @@
 
         }
     </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="ViewComments" onclick="ViewComment();" class="btn btn-default" />
+        </div>
+    </div>
+
+    <div class="AddCommentDiv" id=@($"AddCommentForPost_{Model.Id}") style="display:none">
+        <textarea class=@($"CommentfromPost_{Model.Id}")></textarea>
+        <button class="SendCommentText" onclick="SaveComment(@Model.Id)">Send</button>
+    </div>
+    <input type="button" value="AddComment" onclick="ShowTextArea(@Model.Id);" class="btn btn-default" />
+
     <hr />
+
+    <div id="ComDiv">
+
+    </div>
+
+
+
+
 
     <dl class="dl-horizontal">
         <dt>
@@ -36,6 +104,8 @@
             @Html.DisplayFor(model => model.Location)
         </dd>
 
+
+
         <dt>
             @Html.DisplayNameFor(model => model.Description)
         </dt>
@@ -44,13 +114,6 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.UserName)
@@ -62,6 +125,7 @@
 
     </dl>
 </div>
+
 <p>
     @Html.ActionLink("Back to List", "Index")
 </p>

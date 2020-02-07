@@ -154,7 +154,7 @@ namespace MVC.Controllers
                 {
                     if (dUser.IsProfileShared)
                     {
-                        return RedirectToAction("Testik");
+                        return RedirectToAction("TestFilter");
                     }
                 }
             }

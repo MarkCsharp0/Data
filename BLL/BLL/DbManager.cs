@@ -32,14 +32,15 @@ namespace BLL
                     dbUser.CreateTime = User.CreateTime;
                     dbUser.Salt = User.Salt;
                     dbUser.IsProfileShared = User.IsProfileShared;
+                  /* dbUser.Posts.Clear();
                     User.PostsId.Select(x => new Post()
                     {
                         Id = x,
                         CreateDate = GetPostById(x).CreateDate,
                         Description = GetPostById(x).Description,
                         Location = GetPostById(x).Location
-                    }).ToList().ForEach(dbUser.Posts.Add);
-                    if (User.ImageAvatarId is int imgId)
+                    }).ToList().ForEach(dbUser.Posts.Add);*/
+                    if (User.ImageAvatarId is int imgId && !dbUser.Avatars.Any(x => x.ImageId == imgId))
                         dbUser.Avatars.Add(new Data.Entities.Avatar { ImageId = imgId });
                     ctx.SaveChanges();
 
@@ -87,14 +88,21 @@ namespace BLL
                         oldPost.Location = post.Location;
                         oldPost.PostImages.Clear();
                         //oldPost.Comments.Add();
-                        //oldPost.Comments.Clear();
+                     //   oldPost.Comments.Clear();
                         var i = 0;
                         post.ImageIds.Select(x => new PostImage()
                         {
                             ImageId = x,
                             Position = ++i
                         }).ToList().ForEach(oldPost.PostImages.Add);
-                            
+                     /*   post.Comments.Select(x => new Comment()
+                        {
+                            Id= x,
+                            CommentText = GetComment(x).CommentText,
+                          //  UserId = GetComment(x).UserId
+
+                        }).ToList().ForEach(oldPost.Comments.Add);*/
+
 
                     }
                     else
@@ -109,23 +117,30 @@ namespace BLL
                         };
                         dbPost.PostImages.Clear();
                         
-                //        dbPost.Comments.Clear();
+                       // dbPost.Comments.Clear();
                         var i = 0;
                         post.ImageIds.Select(x => new PostImage()
                         {
                             ImageId = x,
                             Position = ++i
                         }).ToList().ForEach(dbPost.PostImages.Add);
-                      /*      if (post.Comments != null)
-                           {
-                               post.Comments.Select(x => new Comment()
-                               {
-                                   Id = x,
-                                   CommentText = GetComment(x).CommentText,
-                                   UserId = GetComment(x).UserId,
-                                   PostId = GetComment(x).PostId
-                               }).ToList().ForEach(dbPost.Comments.Add);
-                           }*/
+                        /*      if (post.Comments != null)
+                             {
+                                 post.Comments.Select(x => new Comment()
+                                 {
+                                     Id = x,
+                                     CommentText = GetComment(x).CommentText,
+                                     UserId = GetComment(x).UserId,
+                                     PostId = GetComment(x).PostId
+                                 }).ToList().ForEach(dbPost.Comments.Add);
+                             }*/
+                     /*   post.Comments.Select(x => new Comment()
+                        {
+                            Id = x,
+                            CommentText = GetComment(x).CommentText,
+                            UserId = GetComment(x).UserId
+
+                        }).ToList().ForEach(dbPost.Comments.Add);*/
 
                         ctx.Posts.Add(dbPost);
                     }
@@ -304,6 +319,7 @@ namespace BLL
                 var post = new PostDTO
                 {
                     ImageIds = new List<int>(),
+                    Id = dbpost.Id,
                     Comments = new List<int>(),
                     CreateDate = dbpost.CreateDate,
                     Description = dbpost.Description,
@@ -353,6 +369,7 @@ namespace BLL
                     {
                         BirthDate = dbUser.BirthDate,
                         Id = dbUser.Id,
+                        PostsId = new List<int>(),
                         LoginName = dbUser.LoginName,
                         Nickname = dbUser.Nickname,
                         PasswordHash = dbUser.PasswordHash,
@@ -361,6 +378,7 @@ namespace BLL
                         IsProfileShared = dbUser.IsProfileShared
                     };
                     dbUser.Posts.Select(x => x.Id).ToList().ForEach(user.PostsId.Add);
+                  
                     var Avatar = dbUser.Avatars.FirstOrDefault(x => x.UserId == user.Id);
                     if (Avatar is Avatar)
                     {

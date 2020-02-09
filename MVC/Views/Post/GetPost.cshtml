@@ -24,6 +24,7 @@
 <script>
     var imageIds = JSON.parse("@Json.Encode(Model.ImageIds)");
     var comments = JSON.parse("@Json.Encode(Model.Comments)");
+    var bool = new Array(1002);
 
      function ShowTextArea(Id) {
         var str = "#" + "AddCommentForPost_" + Id;
@@ -39,13 +40,21 @@
 
     function ViewComment() {
         for (var prop in comments) {
-            console.log(comments[prop])
+            console.log(bool[prop]);
+            if (bool[prop] == true) {
+              //  alert("Undefined");
+              //  console.log("fad" + prop);
+                continue;
+            }
+            console.log(bool);
             $.post('@Url.Action("GetComment")/' + comments[prop]).done(function (res) {
                 var str1 = "<p> Author - " + res.Nick + "</p>";
                 var str = "<p style='border: 3px solid black; background-color: #d5d5d1; padding: 5px'>" + res.Text + "</p>";
                 $("#ComDiv").append(str);
                 $("#ComDiv").append(str1);
-                alert(str + str1);
+                bool[prop] = true;
+                //console.log(bool[prop] + prop);
+                alert(str1 + str);
             });
         }
     }
@@ -78,12 +87,9 @@
 
         }
     </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="button" value="ViewComments" onclick="ViewComment();" class="btn btn-default" />
-        </div>
-    </div>
+    <hr/>
+    <input type="button" value="ViewComments" onclick="ViewComment();" class="btn btn-default" />
+    
 
     <div class="AddCommentDiv" id=@($"AddCommentForPost_{Model.Id}") style="display:none">
         <textarea class=@($"CommentfromPost_{Model.Id}")></textarea>
@@ -133,5 +139,6 @@
 </div>
 
 <p>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Feed", "Index")
+    <a href="/user/viewprofile/@Model.UserId">Back to Profile</a>
 </p>

@@ -117,23 +117,14 @@ namespace BLL
                        // oldPost.UserId = post.UserId;
                         oldPost.Location = post.Location;
                         oldPost.PostImages.Clear();
-                        //oldPost.Comments.Add();
-                     //   oldPost.Comments.Clear();
+                    
                         var i = 0;
                         post.ImageIds.Select(x => new PostImage()
                         {
                             ImageId = x,
                             Position = ++i
                         }).ToList().ForEach(oldPost.PostImages.Add);
-                     /*   post.Comments.Select(x => new Comment()
-                        {
-                            Id= x,
-                            CommentText = GetComment(x).CommentText,
-                          //  UserId = GetComment(x).UserId
-
-                        }).ToList().ForEach(oldPost.Comments.Add);*/
-
-
+           
                     }
                     else
                     {
@@ -146,32 +137,14 @@ namespace BLL
                             Location = post.Location
                         };
                         dbPost.PostImages.Clear();
-                        
-                       // dbPost.Comments.Clear();
+                      
                         var i = 0;
                         post.ImageIds.Select(x => new PostImage()
                         {
                             ImageId = x,
                             Position = ++i
                         }).ToList().ForEach(dbPost.PostImages.Add);
-                        /*      if (post.Comments != null)
-                             {
-                                 post.Comments.Select(x => new Comment()
-                                 {
-                                     Id = x,
-                                     CommentText = GetComment(x).CommentText,
-                                     UserId = GetComment(x).UserId,
-                                     PostId = GetComment(x).PostId
-                                 }).ToList().ForEach(dbPost.Comments.Add);
-                             }*/
-                     /*   post.Comments.Select(x => new Comment()
-                        {
-                            Id = x,
-                            CommentText = GetComment(x).CommentText,
-                            UserId = GetComment(x).UserId
-
-                        }).ToList().ForEach(dbPost.Comments.Add);*/
-
+              
                         ctx.Posts.Add(dbPost);
                     }
 
@@ -194,7 +167,7 @@ namespace BLL
                     MymeType = Image.MymeType,
                     UserId = Image.UserId
                 };
-                // image.Avatar
+              
                 var dbImg = ctx.Images.Add(image);
                 ctx.SaveChanges();
                 return dbImg.Id;

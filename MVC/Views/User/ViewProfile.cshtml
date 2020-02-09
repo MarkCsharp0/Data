@@ -16,7 +16,7 @@
 {
 
     <div>
-        <a href=@($"/post/getpost/{postId}")>ViewPost</a>
+        <a class ="glyphicon glyphicon-info-sign" href=@($"/post/getpost/{postId}")> Post№@postId</a>
 
     </div>
 }
@@ -31,11 +31,11 @@
             <img class="AvatarImage" height="300" width="300" title="Change" src="@Url.Action("Get", "Image", new {id=Model.ImageAvatarId })"
                  onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" />
         </dd>
-        <dt>
+        <dt font-size="30">
             @Html.DisplayNameFor(model => model.LoginName)
         </dt>
 
-        <dd>
+        <dd font-size="30">
             @Html.DisplayFor(model => model.LoginName)
         </dd>
 

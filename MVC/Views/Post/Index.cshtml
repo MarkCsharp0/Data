@@ -6,11 +6,17 @@
 
     <style>
         .PostImage {
-            max-height: 200px;
-            max-width: 200px;
+            max-height: 400px;
+            max-width: 400px;
             border-radius: 5px;
             cursor: crosshair;
         }
+        .link a {
+     display: block; /* Ссылка как блочный элемент */
+     text-align: center; /* Выравнивание по центру */
+     height: 100%; /* Высота на весь слой */
+     color: #666; /* Цвет ссылки */
+    }
 
         
         .text {
@@ -77,20 +83,46 @@
 
     }
 
-     function GetMorePosts() {
+    function GetMorePosts() {
+        if (hasMorePosts == false) {
+            alert("Don't have posts");
+            return;
+        }
          var lastId = $(".PostDiv").last().data("id");
-         alert(lastId);
+        // alert(lastId);
         $.get('@Url.Action("GetMorePosts")/' + lastId).done(function (res) {
+          //  console.log(res);
             if (Array.isArray(res)) {
                 if (res.length == 0) {
                     hasMorePosts = false
+                    alert("Don't have posts");
+                    return;
                 }
                 else {
                     console.log(res);
                     for (var elem in res) {
                         console.log(elem);
-                    var str =  "<p> Author - " + res[elem].Description + "</p>"
-                    $(".Posts").append(str);
+                        var str = "<div class='PostDiv' data-id=" + res[elem].Id + ">";
+                        var str1 = "<a class='glyphicon glyphicon-info-sign' href=/post/getpost/" + res[elem].Id + "></a>";
+                        var str2 = "<div><h3>" + res[elem].UserName + "'s Post</h3><h4>" + res[elem].Location + "</h4></div>";
+                        var str4 = "<div>";
+                        if (res[elem].CanEdit) {
+                            str1 += "<a class='glyphicon glyphicon-edit' href=/post/createpost/" + res[elem].Id + "></a>";
+                        }
+                        var ImageIds = res[elem].ImageIds;
+                        for (var img in ImageIds) {
+                            var s = "<img class='PostImage' title='Image' src=/image/get/" + ImageIds[img]+ "/>";
+                            str4 += s;
+                        }
+                        str4 += "</div>";
+                        var str5 = "<div class='AddCommentDiv' id=AddCommentForPost_" + res[elem].Id +  " style='display:none'> <textarea class='CommentfromPost_" + res[elem].Id + "'></textarea>";
+                        str5 += "<button class='SendCommentText' onclick='SaveComment(" + res[elem].Id + ")'>Send</button>";
+                        str5 += "</div>   <input type='button' value='AddComment' onclick='ShowTextArea(" + res[elem].Id + ")' class='btn btn-default' /> </div> ";
+               
+          
+                        var str3 = "<div><p style='border: 1px solid black; background-color: #fff; padding: 5px'>" + res[elem].Description + "</p><br /> <p style='display:none'>UserId -" +res[elem].UserId + "</p></div>";
+                        console.log(str + str1 + str2 + str3) ;
+                    $(".Posts").append(str + str1 + str2 + str4 + str3 + str5);
                     }
                     
                 }
@@ -104,6 +136,7 @@
 
 
 <a class="glyphicon glyphicon-plus" href="/post/createpost"></a>
+<hr/>
 
 <div class="Posts">
     @foreach (var post in Model)
@@ -113,29 +146,24 @@
         <div class="PostDiv" data-id=@post.Id>
           
             <a class="glyphicon glyphicon-info-sign" href=@($"/post/getpost/{post.Id}")></a>
-            <hr />
-
+          
             @if (post.CanEdit) { 
             <a class="glyphicon glyphicon-edit" href=@($"/post/createpost/{post.Id}")></a>
             }
-            <div>
-                Location- @post.Location<br />
-            </div>
-            <div>
-                @foreach (var imgId in post.ImageIds)
-                {
-                    <img class="PostImage" title="delete" src="@Url.Action("Get", "Image")/@imgId" />
+        <div>
+            <h3>@post.UserName's Post</h3>
+            <h4>@post.Location</h4>
+        </div>
+        <div>
+            @foreach (var imgId in post.ImageIds)
+            {
+                <img class="PostImage" title="Image" src="@Url.Action("Get", "Image")/@imgId" />
 
-                }
-            </div>
+            }
+        </div>
             <div>
-                Description - @post.Description<br />
-                UserName -@post.UserName <br />
-                UserId -@post.UserId
-            </div>
-            <button class="ViewCommentsButton" data-toogle="view" onclick="ViewComments(@post.Id.ToString())">ViewComments</button>
-            <div id=@($"Comments{post.Id}") style="display:none">
-
+                <p style='border: 1px solid black; background-color: #fff; padding: 5px'>@post.Description</p><br />
+                <p style="display:none">UserId -@post.UserId</p>
             </div>
 
             <div class="AddCommentDiv" id=@($"AddCommentForPost_{post.Id}") style="display:none">
@@ -143,9 +171,8 @@
                 <button class="SendCommentText" onclick="SaveComment(@post.Id)">Send</button>
             </div>
             <input type="button" value="AddComment" onclick="ShowTextArea(@post.Id.ToString());" class="btn btn-default" />
-
-            <hr />
         </div>
+        <br/>
     }
 </div>
 <input type="button" value="GetMorePosts" onclick="GetMorePosts();" class="btn btn-default" />

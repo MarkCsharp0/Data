@@ -9,8 +9,12 @@
             max-width: 200px;
             border-radius: 5px;
         }
+
+          .text {
+            text-align: center;
+        }
     </style>
-<h2>CreateOrEditPost</h2>
+<h2 class="text">CreateOrEditPost</h2>
 
 <script>
     var imageIds = JSON.parse("@Json.Encode(Model.ImageIds)");
@@ -56,14 +60,14 @@
         }
         console.log(post);
         $.post('@Url.Action("CreatePost")', post).done(function (res) {
-            alert("Good")
+            alert(res.Success)
         });
-        console.log(post);
+        //console.log(post);
         
     }
 </script>
 
-<div id="PicturesDiv">
+<div id="PicturesDiv" class="text">
 
     @if (Model.ImageIds is List<int> Images)
     {
@@ -77,11 +81,14 @@
 </div>
 
 <div id="PictureUpload" class="UploadLabel">
-    <input type="file" name="AvatarImage" onchange="UploadImage(this);" class="form-control" accept=".jpg,.png,.gif" />
+    <label for="upload" class="text">
+        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+        <input type="file" name="AvatarImage" id="upload" onchange="UploadImage(this);" accept=".jpg,.png,.gif" style="display:none">
+    </label>
 </div>
 
-<div class="form-horizontal PostForm">
-    <hr />
+<div class="form-horizontal PostForm ">
+    
     @Html.HiddenFor(x => x.Id)
     @Html.HiddenFor(x => x.UserId)
     <dl>

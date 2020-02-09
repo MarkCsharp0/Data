@@ -6,8 +6,8 @@
 
 <style>
     .AvatarImage {
-        max-height: 100px;
-        max-width: 100px;
+        max-height: 400px;
+        max-width: 400px;
         border-radius: 5px;
         cursor: crosshair;
     }
@@ -26,13 +26,9 @@
 
 
     <div>
-        <a href=@($"/user/viewprofile/{user.Id}")>ViewProfile</a>
-
-        <div>
-            @user.Nickname<br />
-        </div>
-
-        <img class="AvatarImage" title="Avatar" src="@Url.Action("Get", "Image", new {id=user.ImageAvatarId })"
+        <a href=@($"/user/viewprofile/{user.Id}")>View @user.Nickname's Profile</a>
+        <br/>
+        <img class="AvatarImage" title="@user.Nickname" src="@Url.Action("Get", "Image", new {id=user.ImageAvatarId })"
              onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" />
 
     </div>

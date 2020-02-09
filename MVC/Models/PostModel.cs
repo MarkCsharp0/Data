@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVC.Models
 {
@@ -8,7 +9,7 @@ namespace MVC.Models
 
         public string Location { get; set; }
 
-
+        [Required]
         public string Description { get; set; }
 
         public int UserId { get; set; }

@@ -94,8 +94,9 @@ canvas {
                     processData: false,
                     data: fd,
                     success: function (result) {
-                        ChangePhoto(@Model.Id, result.ImageId)
                         alert("Success")
+                        ChangePhoto(@Model.Id, result.ImageId)
+                       
                     },
                     error: function (xhr, status, p3) {
                         alert(xhr.responseText);
@@ -217,7 +218,7 @@ canvas.toBlob(function(blob) {
             x.width = img.width;
             x.height = img.height;
             context.drawImage(img, 0, 0, img.width, img.height);
-             $("#example").removeAttr("data-caman-id");
+            $("#example").removeAttr("data-caman-id");
         };
 
     });

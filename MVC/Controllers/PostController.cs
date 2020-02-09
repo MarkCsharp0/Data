@@ -15,11 +15,8 @@ namespace MVC.Controllers
         public JsonResult GetComment(int? id)
         {
             var com = DbManager.GetComment(id.Value);
-
             var user = DbManager.GetUser(com.UserId);
-           
-
-            return Json(new { Text = com.CommentText, Nick = user.Nickname});
+            return Json(new { Text = com.CommentText, Nick = user.Nickname, Id = com.Id});
 
         }
 
@@ -57,7 +54,7 @@ namespace MVC.Controllers
                 post.Comments.ForEach(fModel.Comments.Add);
                 model.Add(fModel);
             }
-           // return View(model);
+           
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -107,7 +104,7 @@ namespace MVC.Controllers
                 var model = new List<PostModel>();
                 foreach (PostDTO post in postsDTO)
                 {
-                    // var CustomUser = (CustomPrincipal)User;
+                  
                     var fModel = new PostModel
                     {
                         ImageIds = new List<int>(),
@@ -119,7 +116,7 @@ namespace MVC.Controllers
                         Id = post.Id
                     };
                     fModel.CanEdit = User.Identity.IsAuthenticated && fModel.UserId == ((CustomAuth.CustomPrincipal)User).UserId;
-                    //   fModel.UserName = CustomUser.Nickname;
+                   
                     post.ImageIds.ForEach(fModel.ImageIds.Add);
                     post.Comments.ForEach(fModel.Comments.Add);
                     model.Add(fModel);
@@ -141,14 +138,14 @@ namespace MVC.Controllers
                 var model = new List<PostModel>();
                 foreach (PostDTO post in postsDTO)
                 {
-                    // var CustomUser = (CustomPrincipal)User;
+               
                     var fModel = new PostModel();
                     fModel.ImageIds = new List<int>();
                     fModel.Description = post.Description;
                     fModel.Location = post.Location;
                     fModel.UserId = post.UserId;
                     fModel.Id = post.Id;
-                    //   fModel.UserName = CustomUser.Nickname;
+                   
                     post.ImageIds.ForEach(fModel.ImageIds.Add);
                     model.Add(fModel);
                 }
@@ -198,9 +195,14 @@ namespace MVC.Controllers
             
         }
         [HttpPost]
-        public JsonResult CreatePost(MVC.Models.PostModel model)
+        public ActionResult CreatePost(MVC.Models.PostModel model)
         {
-
+            if (!ModelState.IsValid)
+            {
+                  ModelState.AddModelError("", "Description invalid");
+                  return View(model);
+            
+            }         
             // var t = System.Web.HttpContext.Current.Request.Form["Images"];
             // Console.WriteLine(t);
             //var result = new JsonResultResponse { Success = true };
@@ -236,11 +238,12 @@ namespace MVC.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                //Console.WriteLine(ex.Message);
+                return Json(new { Success = false });
                 // result.Success = false;
                 //result.Result = ex.Message;
             }
-            return new JsonResult();
+            return Json(new { Success = true});
         }
 
         /*  public JsonResult GetComments(int id)

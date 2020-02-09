@@ -4,14 +4,19 @@
     ViewBag.Title = "View";
 }
 
-<h2>View</h2>
+<style>
+    .text {
+        text-align: center;
+    }
+</style>
+
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
-    <div class="form-horizontal">
-        <h4>RegUserModel</h4>
+    <div class="form-horizontal " >
+        <h3 class="text">Registration</h3>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">

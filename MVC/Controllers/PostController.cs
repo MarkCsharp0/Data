@@ -23,6 +23,45 @@ namespace MVC.Controllers
 
         }
 
+        public JsonResult ChangePhoto(int oldId, int newId)
+        {
+            var post = DbManager.GetPostByImageId(oldId);
+            post.ImageIds.Remove(oldId);
+            post.ImageIds.Add(newId);
+            DbManager.CreateUpdatePost(post);
+
+            return Json(new { Success = true });
+        }
+
+        [HttpGet]
+        public JsonResult GetMorePosts(int id)
+        {
+            var postsDTO = DbManager.GetPosts(id);
+            var model = new List<PostModel>();
+            foreach (PostDTO post in postsDTO)
+            {
+                // var CustomUser = (CustomPrincipal)User;
+                var fModel = new PostModel
+                {
+                    ImageIds = new List<int>(),
+                    Comments = new List<int>(),
+                    Description = post.Description,
+                    Location = post.Location,
+                    UserId = post.UserId,
+                    UserName = DbManager.GetUser(id: post.UserId).Nickname,
+                    Id = post.Id
+                };
+                fModel.CanEdit = User.Identity.IsAuthenticated && fModel.UserId == ((CustomAuth.CustomPrincipal)User).UserId;
+                //   fModel.UserName = CustomUser.Nickname;
+                post.ImageIds.ForEach(fModel.ImageIds.Add);
+                post.Comments.ForEach(fModel.Comments.Add);
+                model.Add(fModel);
+            }
+           // return View(model);
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult GetPost(int? id)
         {
             var post = DbManager.GetPostById(id.Value);
@@ -79,6 +118,7 @@ namespace MVC.Controllers
                         UserName = DbManager.GetUser(id: post.UserId).Nickname,
                         Id = post.Id
                     };
+                    fModel.CanEdit = User.Identity.IsAuthenticated && fModel.UserId == ((CustomAuth.CustomPrincipal)User).UserId;
                     //   fModel.UserName = CustomUser.Nickname;
                     post.ImageIds.ForEach(fModel.ImageIds.Add);
                     post.Comments.ForEach(fModel.Comments.Add);

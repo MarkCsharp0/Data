@@ -152,7 +152,7 @@ namespace MVC.Controllers
                var dUser = BLL.DbManager.GetUser(Login: User.Identity.Name);
                if (dUser.Id != id)
                 {
-                    if (dUser.IsProfileShared)
+                    if (!user.IsProfileShared)
                     {
                         return RedirectToAction("TestFilter");
                     }
@@ -282,11 +282,26 @@ namespace MVC.Controllers
 
         [HttpGet]
 
-        public ActionResult TestFilter()
+        public ActionResult TestFilter(int? id)
         {
-            return View();
-
-
+            if (!id.HasValue)
+            {
+                ModelState.AddModelError("", "Username or Password invalid");
+                return RedirectToAction("Index");
+            }
+            var image = DbManager.GetImage(id.Value);
+            if (image == null)
+            {
+                ModelState.AddModelError("", "Username or Password invalid");
+                return View();
+            }
+            var model = new ImageModel
+            {
+                Id = image.Id,
+                BlobId = image.BlobId,
+                UserId = image.UserId
+            };
+            return View(model);
         }
 
         [HttpGet]

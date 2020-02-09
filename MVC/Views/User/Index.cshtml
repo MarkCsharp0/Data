@@ -13,23 +13,28 @@
     }
 </style>
 
-<h2>User's Feed</h2>
+<h2 class="text">User's Feed</h2>
+<style>
 
+    .text {
+        text-align: center;
+    }
+</style>
 
 @foreach (var user in Model)
 {
 
-    
-<div>
-    <a href=@($"/user/viewprofile/{user.Id}")>ViewProfile</a>
 
     <div>
-        @user.Nickname<br />
+        <a href=@($"/user/viewprofile/{user.Id}")>ViewProfile</a>
+
+        <div>
+            @user.Nickname<br />
+        </div>
+
+        <img class="AvatarImage" title="Avatar" src="@Url.Action("Get", "Image", new {id=user.ImageAvatarId })"
+             onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" />
+
     </div>
-
-    <img class="AvatarImage" title="Change" src="@Url.Action("Get", "Image", new {id=user.ImageAvatarId })"
-         onerror="this.onerror=null;this.src='https://placeimg.com/200/300/animals';" />
-
-</div>
 
 }

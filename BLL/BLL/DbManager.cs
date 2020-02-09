@@ -71,6 +71,36 @@ namespace BLL
             return false;
         }
 
+        public static PostDTO GetPostByImageId (int id)
+        {
+            using (var ctx = new DbEntities())
+            {
+                var posts = ctx.Posts.ToList();
+                foreach (var dbpost in posts)
+                {
+                    var postImage = dbpost.PostImages.FirstOrDefault(x => x.ImageId == id);
+                    if (postImage != null)
+                    {
+                        var post = new PostDTO
+                        {
+                            ImageIds = new List<int>(),
+                            Id = dbpost.Id,
+                            Comments = new List<int>(),
+                            CreateDate = dbpost.CreateDate,
+                            Description = dbpost.Description,
+                            Location = dbpost.Location,
+                            UserId = dbpost.UserId
+                        };
+                        dbpost.PostImages.Select(x => x.ImageId).ToList().ForEach(post.ImageIds.Add);
+                        dbpost.Comments.Select(x => x.Id).ToList().ForEach(post.Comments.Add);
+                        return post;
+                    }
+
+                }
+                return null;
+            }
+
+        }
 
         public static void CreateUpdatePost(PostDTO post)
         {
@@ -205,6 +235,10 @@ namespace BLL
             using (var ctx = new DbEntities())
             {
                 var image = ctx.Images.Find(id);
+                if (image == null)
+                {
+                    return null;
+                }
                 var ImageDTO = new ImageDTO
                 {
                     Id = image.Id,

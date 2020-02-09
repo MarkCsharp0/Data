@@ -15,6 +15,8 @@ namespace MVC.Models
 
         public string UserName { get; set; }
 
+        public bool CanEdit { get; set; }
+
         public List<int> ImageIds { get; set; }
 
         public List<int> Comments { get; set; }

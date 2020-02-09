@@ -1,29 +1,109 @@
-﻿
+﻿@model MVC.Models.ImageModel
+
 @{
     ViewBag.Title = "TestFilter";
 }
 
 <h2>TestFilter</h2>
+<style>
+
+canvas {
+  margin-bottom: 40px;
+  background: #ececec;
+  width: 600px;
+  max-width: 100%;
+}
+
+.filter-name {
+  background: #795548;
+  padding: 2px;
+  display: inline-block;
+  color: white;
+  width: 100px;
+  border-radius: 3px;
+  text-align: center;
+}
+.editor-buttons input{
+  margin: 4px;
+  background: black;
+  border: none;
+  color: white;
+  font-family: "Lato";
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.editor-buttons {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.filter-buttons button{
+  margin: 4px;
+  background: black;
+  border: none;
+  color: white;
+  font-family: "Lato";
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 1em;
+}
+.filter-group {
+  display: inline-block;
+  margin: 5px 15px;
+}
+
+</style>
 
 <script>
 
-    function Filter(elem) {
-
-        Caman('#example', function () {
-          
-    this.brightness(10);
-    this.contrast(30);
-    this.sepia(60);
-    this.saturation(-30);
-    this.render();
-  });
-
-    }
     function Nostalgia(elem) {
         Caman('#example',  function () {
         this.nostalgia().render();
     });
 
+    }
+
+    function ChangePhoto(oldId, newId) {
+         var data={
+            "oldId": oldId,
+            "newId":newId
+        }
+        $.post('@Url.Action("ChangePhoto", "Post")', data).done(function (res) {
+           alert("Yeah")
+        });
+
+    }
+
+    function Upload() {
+        var canvas = document.getElementById('example'); // some canvas with an image
+        var url = canvas.toDataURL();
+        var blobBin = atob(url.split(',')[1]);
+        var array = [];
+        for(var i = 0; i < blobBin.length; i++) {
+             array.push(blobBin.charCodeAt(i));
+        }
+        var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
+        var fd = new FormData();
+        fd.append("file", file);
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Upload")', 
+                    contentType: false,
+                    processData: false,
+                    data: fd,
+                    success: function (result) {
+                        ChangePhoto(@Model.Id, result.ImageId)
+                        alert("Success")
+                    },
+                    error: function (xhr, status, p3) {
+                        alert(xhr.responseText);
+                    },
+                    complete: function () {
+                       // $(".UploadLabel").html($(".UploadLabel").html());
+                    }
+                });
     }
 
     function Lomo(elem) {
@@ -51,8 +131,47 @@
         Caman('#example',  function () {
         this.emboss().render();
     });
+    }
 
+    function MinusBrightness() {
+         Caman('#example',  function () {
+        this.brightness(-10).render();
+         console.log("Kek");
+    });
+    }
 
+      function PlusBrightness() {
+         Caman('#example',  function () {
+        this.brightness(10).render();
+         console.log("Kek");
+    });
+    }
+
+       function MinusGamma() {
+         Caman('#example',  function () {
+        this.gamma(-5).render();
+         console.log("Kek");
+    });
+    }
+
+      function PlusGamma() {
+         Caman('#example',  function () {
+        this.gamma(5).render();
+         console.log("Gama");
+    });
+    }
+    function MinusContrast() {
+         Caman('#example',  function () {
+        this.contrast(-5).render();
+         console.log("contr");
+    });
+    }
+
+    function PlusContrast() {
+         Caman('#example',  function () {
+        this.contrast(5).render();
+         console.log("contr");
+    });
     }
 
      function Noise(elem) {
@@ -70,109 +189,83 @@
 
     }
 
+    function Test() {
+        var canvas = document.getElementById('example');
 
-         function component()
-{
-    var x = document.getElementById('example');
-    context = x.getContext('2d');
-    var img = new Image();  // Создание нового объекта изображения
-    img.src = "@Url.Action("Get", "Image")/1";
-    context.drawImage(img, 0, 0);
-}
+canvas.toBlob(function(blob) {
+  var newImg = document.createElement('img'),
+      url = URL.createObjectURL(blob);
+
+  newImg.onload = function() {
+    // больше не нужно читать blob, поэтому он отменен
+    URL.revokeObjectURL(url);
+  };
+
+  newImg.src = url;
+  document.body.appendChild(newImg);
+});
+
+    }
+
+    $().ready(function () {
+        var x = document.getElementById('example');
+        var context = x.getContext('2d');
+        var img = new Image();  // Создание нового объекта изображения
+        var str = "@Url.Action("Get", "Image")/" + @Model.Id;
+        img.src = str;
+        img.onload = function () {
+            x.width = img.width;
+            x.height = img.height;
+            context.drawImage(img, 0, 0, img.width, img.height);
+             $("#example").removeAttr("data-caman-id");
+        };
+
+    });
+    
+    function component() {
+        var x = document.getElementById('example');
+        var context = x.getContext('2d');
+        var img = new Image();  // Создание нового объекта изображения
+        var str = "@Url.Action("Get", "Image")/" + @Model.Id;
+        img.src = str;
+        img.onload = function () {
+            x.width = img.width;
+            x.height = img.height;
+            context.drawImage(img, 0, 0, img.width, img.height);
+            $("#example").removeAttr("data-caman-id");
+        };
+    }
+      //  $("#example").removeAttr("data-caman-id");
 </script>
 
-<canvas id="example" width="600" height="401" data-caman-id="1"></canvas>
+<canvas id="example"></canvas>
 
-<div id="Filters">
-
-    <div class="Filter">
-        <div class="FilterName">
-            <p>brightness</p>
-        </div>
-
-        <div class="FilterSetting">
-            <input type="range"
-                   min="-100"
-                   max="100"
-                   step="1"
-                   value="0"
-                   data-filter="brightness">
-            <span class="FilterValue">0</span>
-        </div>
+<div class="filter-buttons">
+    <div class="filter-group">
+        <button id="brightness-dec" onclick="MinusBrightness()">-</button>
+        <span class="filter-name">Brightness</span>
+        <button id="brightness-inc" onclick="PlusBrightness()">+</button>
     </div>
-    <div class="Filter">
-        <div class="FilterName">
-            <p>contrast</p>
-        </div>
-
-        <div class="FilterSetting">
-            <input type="range"
-                   min="-100"
-                   max="100"
-                   step="1"
-                   value="0"
-                   data-filter="contrast">
-            <span class="FilterValue">0</span>
-        </div>
+    <div class="filter-group">
+        <button id="gamma-dec" onclick="MinusGamma()" disabled>-</button>
+        <span class="filter-name">Gamma</span>
+        <button id="gamma-inc" onclick="PlusGamma()">+</button>
+    </div>
+    <div class="filter-group">
+        <button id="contrast-dec" onclick="MinusContrast()" >-</button>
+        <span class="filter-name">Contrast</span>
+        <button id="contrast-inc" onclick="PlusContrast()">+</button>
     </div>
 </div>
 
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
-        <input type="button" value="Draw" onclick="component();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
-        <input type="button" value="Filter" onclick="Filter();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
+    <div class="editor-buttons">
+        <input type="button" value="Original" onclick="component();" class="btn btn-default" />
         <input type="button" value="Majesty" onclick="Majesty();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
         <input type="button" value="Lomo" onclick="Lomo();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
         <input type="button" value="Nostalgia" onclick="Nostalgia();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
         <input type="button" value="Vintage" onclick="Vintage();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
         <input type="button" value="Emboss" onclick="Emboss();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
         <input type="button" value="Noise" onclick="Noise();" class="btn btn-default" />
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
         <input type="button" value="Love" onclick="Love();" class="btn btn-default" />
+        <input type="button" value="Upload" onclick="Upload();" class="btn btn-default" />
     </div>
-</div>
-
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
-        <input type="button" value="Create" onclick="Filter(this);" class="btn btn-default" />
-    </div>
-</div>

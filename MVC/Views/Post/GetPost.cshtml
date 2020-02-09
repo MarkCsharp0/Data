@@ -4,7 +4,7 @@
     ViewBag.Title = "GetPost";
 }
 
-<h2>Post</h2>
+<h2 class="text">@Model.UserName Post</h2>
 
 <style>
     .PostImage {
@@ -13,6 +13,12 @@
         border-radius: 5px;
         cursor: crosshair;
     }
+
+
+    .text {
+        text-align: center;
+    }
+
 </style>
 
 <script>

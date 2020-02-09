@@ -4,7 +4,14 @@
     ViewBag.Title = "EditProfile";
 }
 
-<h2>EditProfile</h2>
+    <style>
+
+        .text {
+            text-align: center;
+        }
+    </style>
+
+<h2 class="text">Edit @Model.Nickname Profile</h2>
 
 <script>
     var PostsId = JSON.parse("@Json.Encode(Model.PostsId)");
@@ -58,8 +65,7 @@
 
 
 <div class="form-horizontal">
-    <h4>UserModel</h4>
-    <hr />
+
 
     @foreach (var postId in Model.PostsId)
     {

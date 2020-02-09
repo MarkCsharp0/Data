@@ -3,8 +3,14 @@
 @{
     ViewBag.Title = "ViewProfile";
 }
+    <style>
 
-<h2>View</h2>
+        .text {
+            text-align: center;
+        }
+    </style>
+
+<h2 class="text">@Model.Nickname Profile</h2>
 
 @foreach (var postId in Model.PostsId)
 {

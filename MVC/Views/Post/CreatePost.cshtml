@@ -64,13 +64,16 @@
 </script>
 
 <div id="PicturesDiv">
+
     @if (Model.ImageIds is List<int> Images)
     {
         foreach (var imgId in Images)
         {
-            <img src="@Url.Action("Get", "Image")/@imgId"  class="Img_Preview" data-image-id="@imgId" />
+        <a href=@($"/user/testfilter/{imgId}") title="Open photo editor" id="Picture">
+            <img src="@Url.Action("Get", "Image")/@imgId" class="Img_Preview" data-image-id="@imgId" />
+        </a>
         }
-    }
+        }
 </div>
 
 <div id="PictureUpload" class="UploadLabel">
